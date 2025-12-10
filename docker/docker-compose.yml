@@ -1,0 +1,40 @@
+# docker/docker-compose.yml
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:8.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  seq:
+    image: datalust/seq:2024
+    ports:
+      - "5341:80"
+    environment:
+      ACCEPT_EULA: Y
+
+volumes:
+  mongodb_data:
+  redis_data:
