@@ -1,8 +1,10 @@
 ﻿using System;
 
-public class Class1
+public interface IEntidade
 {
-	public Class1()
+	public IEntidade()
 	{
+
+
 	}
 }
