@@ -12,6 +12,14 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Identity\Models\" />
+    <Folder Include="Identity\Services\" />
+    <Folder Include="Services\Email\" />
+    <Folder Include="Services\SMS\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -10,6 +10,18 @@
     <PackageReference Include="MediatR" Version="14.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Behaviors\" />
+    <Folder Include="Commands\ChangePassword\" />
+    <Folder Include="Commands\ForgotPassword\" />
+    <Folder Include="Commands\Login\" />
+    <Folder Include="Commands\RefreshToken\" />
+    <Folder Include="Common\" />
+    <Folder Include="Queries\GetUserByEmail\" />
+    <Folder Include="Queries\GetUserById\" />
+    <Folder Include="Validators\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
