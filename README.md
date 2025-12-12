@@ -179,8 +179,8 @@ ecommerce-microservices/
 ### Fase 1: Fundação ✅ (Atual)
 - [x] Setup inicial do projeto
 - [x] Infraestrutura Docker
-- [ ] Identity Service
-- [ ] Building Blocks compartilhados
+- [x] Identity Service
+- [x] Building Blocks compartilhados
 
 ### Fase 2: Core Services 📋
 - [ ] Catalog Service
