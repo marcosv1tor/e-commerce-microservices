@@ -1,8 +1,9 @@
-﻿using Identity.Application.Commands.RegisterUser;
+﻿using Identity.Application.Commands.RefreshToken;
+using Identity.Application.Commands.RegisterUser;
 using Identity.Application.Queries.Login;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.API.Controllers;
 
@@ -74,5 +75,19 @@ public class AuthController : ControllerBase
             Email = userEmail
         });
     }
+    /// <summary>
+    /// Troca um Refresh Token válido por um novo JWT e um novo Refresh Token.
+    /// </summary>
+    [HttpPost("refresh-token")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
+    {
+        var result = await _mediator.Send(command);
 
+        if (result.IsFailure)
+            return BadRequest(new { error = result.Error });
+
+        return Ok(result.Value);
+    }
 }

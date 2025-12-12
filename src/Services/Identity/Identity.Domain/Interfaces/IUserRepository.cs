@@ -15,12 +15,10 @@ namespace Identity.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        // Verifica se o email já existe (Regra de negócio: email único)
         Task<bool> ExistsByEmailAsync(string email);
-
         Task<User?> GetByEmailAsync(string email);
-
-        // Adiciona o usuário
+        Task UpdateAsync(User user);
+        Task<User?> GetByRefreshTokenAsync(string RefreshToken);
         Task AddAsync(User user);
     }
 }

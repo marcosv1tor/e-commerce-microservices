@@ -1,7 +1,6 @@
 ﻿using Common.DDD;
 using Common.Behaviors; // Referência ao BuildingBlocks
 using Identity.Domain.ValueObjects; // Referência ao seu ValueObject de Email
-
 namespace Identity.Domain.Entities;
 
 // User herda de AggregateRoot, pois ele é a entidade principal deste contexto
@@ -12,6 +11,9 @@ public class User : AggregateRoot
     public string PasswordHash { get; private set; }
     public string Role { get; private set; }
     public bool IsActive { get; private set; }
+
+    private  List<RefreshToken> _refreshTokens = new();
+    public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens.AsReadOnly();
 
     // Construtor vazio para o EF Core/MongoDB conseguir materializar o objeto
     protected User() { }
@@ -67,5 +69,49 @@ public class User : AggregateRoot
         if (!IsActive) return;
         IsActive = false;
         MarkAsUpdated();
+    }
+
+    /// <summary>
+    /// Adiciona um novo Refresh Token para o usuário.
+    /// </summary>
+    public void AddRefreshToken(string token, int daysToExpire = 30)
+    {
+        var expiration = DateTime.UtcNow.AddDays(daysToExpire);
+        var refreshToken = new RefreshToken(token, expiration);
+
+        _refreshTokens.Add(refreshToken);
+
+        // Opcional: Limpar tokens antigos/revogados para a lista não crescer infinitamente
+        CleanUpOldTokens();
+    }
+
+    /// <summary>
+    /// Verifica se o Refresh Token é válido.
+    /// </summary>
+    public bool VerifyRefreshToken(string token)
+    {
+        var refreshToken = _refreshTokens.FirstOrDefault(x => x.Token == token);
+
+        // O token existe? Está ativo? Não expirou?
+        return refreshToken != null &&
+               !refreshToken.IsRevoked &&
+               refreshToken.ExpirationDate > DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Revoga um token específico (Logout).
+    /// </summary>
+    public void RevokeRefreshToken(string token)
+    {
+        var refreshToken = _refreshTokens.FirstOrDefault(x => x.Token == token);
+        refreshToken?.Revoke();
+    }
+
+    private void CleanUpOldTokens()
+    {
+        // Remove tokens que já expiraram há mais de 5 dias
+        _refreshTokens.RemoveAll(x =>
+            x.ExpirationDate <= DateTime.UtcNow.AddDays(-5) ||
+            x.IsRevoked);
     }
 }

@@ -13,6 +13,9 @@ using System.Text;
 
 // --- Configuração da Aplicação ---
 var builder = WebApplication.CreateBuilder(args);
+
+MongoDbConfig.Configure();
+
 var services = builder.Services;
 var configuration = builder.Configuration;
 
@@ -35,10 +38,6 @@ services.AddScoped<ITokenService, JwtTokenService>();
 // O typeof() aqui é só para dar um "ponteiro" para onde o MediatR deve procurar.
 services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly));
 
-// 6. 🛡️ Configuração de Autenticação JWT
-var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["Secret"];
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,6 +45,8 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+    var secretKey = jwtSettings["Secret"];
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -55,7 +56,28 @@ builder.Services.AddAuthentication(options =>
 
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
+
+        ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"🔥🔥 AUTH FALHOU: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine("✅ AUTH SUCESSO: Token validado!");
+            return Task.CompletedTask;
+        },
+        OnChallenge = context =>
+        {
+            Console.WriteLine($"🛡️ AUTH CHALLENGE: {context.Error}, {context.ErrorDescription}");
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -94,6 +116,7 @@ services.AddSwaggerGen(c =>
         }
     });
 });
+
 
 
 var app = builder.Build();

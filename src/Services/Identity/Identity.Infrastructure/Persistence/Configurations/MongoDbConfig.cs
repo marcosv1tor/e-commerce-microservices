@@ -9,16 +9,18 @@ public static class MongoDbConfig
 {
     public static void Configure()
     {
-        // Configura o mapeamento global da classe Entity (classe base)
-        // Isso diz ao Mongo: "O campo Id da classe deve ser tratado como ObjectId no banco, mas String no C#"
-        /* Nota: Às vezes é necessário registrar o ClassMap manualmente se o Mongo
-           não detectar propriedades privadas ou construtores protegidos.
-        */
+        // Se já estiver registrado, não faz nada (evita erro de registro duplicado)
+        if (BsonClassMap.IsClassMapRegistered(typeof(User)))
+            return;
 
         BsonClassMap.RegisterClassMap<User>(cm =>
         {
-            cm.AutoMap(); // Mapeia propriedades públicas
-            cm.SetIgnoreExtraElements(true); // Ignora campos extras no banco que não tem na classe
+            cm.AutoMap(); // Mapeia as propriedades públicas (Name, Email, etc)
+            cm.SetIgnoreExtraElements(true);
+
+            // 👇 A MÁGICA É AQUI:
+            // Dizemos explicitamente: "O campo C# '_refreshTokens' = Coluna Banco 'RefreshTokens'"
+            cm.MapField("_refreshTokens").SetElementName("RefreshTokens");
         });
     }
 }

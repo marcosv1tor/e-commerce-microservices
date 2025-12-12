@@ -31,9 +31,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         if (emailExists)
             return Result<Guid>.Failure("Email já está em uso.");
 
-        // 3. Hash da senha (SIMULAÇÃO POR ENQUANTO)
-        // Nota: Em produção, usaríamos um serviço de hash real aqui.
-        var passwordHash = request.Password + "_hashed";
+        // 3. Hash da senha utilizando BCrypt
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         // 4. Usar a Factory do Domain para criar a Entidade
         var userResult = User.Register(

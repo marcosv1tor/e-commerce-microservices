@@ -3,6 +3,7 @@ using Identity.Application.DTOs;
 using Identity.Application.Interfaces;
 using Identity.Domain.Interfaces;
 using MediatR;
+using System.ComponentModel;
 
 namespace Identity.Application.Queries.Login;
 
@@ -23,25 +24,35 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginRespons
         var user = await _userRepository.GetByEmailAsync(request.Email);
         
         if (user is null)
-            return Result<LoginResponse>.Failure("Invalid credentials"); // Não diga "Email não encontrado" por segurança
+            return Result<LoginResponse>.Failure("Credenciais inválidas"); // Não diga "Email não encontrado" por segurança
 
-        // 2. Validar Senha (SIMULAÇÃO: Comparando texto puro por enquanto)
-        // Em breve usaremos BCrypt aqui!
-        var passwordHashInput = request.Password + "_hashed"; 
-        if (user.PasswordHash != passwordHashInput)
+        // 2. Validar Senha (Utilizando BCrypt)
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+        if (!isPasswordValid)
         {
-            return Result<LoginResponse>.Failure("Invalid credentials");
+            return Result<LoginResponse>.Failure("Credenciais inválidas");
         }
 
         // 3. Gerar Token
         var token = _tokenService.GenerateToken(user);
 
-        // 4. Retornar DTO
+        // 4. Gerar Refresh Token (Acesso longo, salva no banco)
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        // Adiciona o token na entidade User (Regra de Negócio: expira em 30 dias)
+        user.AddRefreshToken(refreshToken, 30);
+
+        // 5. Salvar a alteração no MongoDB
+        await _userRepository.UpdateAsync(user);
+
+        // 6. Retornar DTO
         var response = new LoginResponse(
             Guid.Parse(user.Id), 
             user.Name, 
             user.Email.Value, 
-            token
+            token,
+            refreshToken
         );
 
         return Result<LoginResponse>.Success(response);

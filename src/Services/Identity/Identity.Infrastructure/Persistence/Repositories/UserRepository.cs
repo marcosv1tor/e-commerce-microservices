@@ -13,13 +13,11 @@ public class UserRepository : IUserRepository
     {
         _context = context;
     }
-
     public async Task AddAsync(User user)
     {
         // Insere o documento no MongoDB
         await _context.Users.InsertOneAsync(user);
     }
-
     public async Task<bool> ExistsByEmailAsync(string email)
     {
         // Busca um usuário onde o campo Email.Value seja igual ao email fornecido
@@ -28,12 +26,32 @@ public class UserRepository : IUserRepository
             .Find(u => u.Email.Value == email)
             .AnyAsync();
     }
-
     public async Task<User?> GetByEmailAsync(string email)
     {
         // Busca o primeiro usuário que encontrar com esse email ou retorna null
         return await _context.Users
             .Find(u => u.Email.Value == email)
             .FirstOrDefaultAsync();
+    }
+    public async Task UpdateAsync(User user) 
+    {
+        // Substitui o documento inteiro pelo novo objeto atualizado
+        // O filtro é: Onde o Id do banco for igual ao Id do objeto
+        await _context.Users.ReplaceOneAsync(u => u.Id == user.Id, user);
+    }
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        // ❌ JEITO ANTIGO (Causa erro porque u.RefreshTokens não está mapeado)
+        // return await _context.Users
+        //     .Find(u => u.RefreshTokens.Any(t => t.Token == refreshToken))
+        //     .FirstOrDefaultAsync();
+
+        // ✅ JEITO NOVO (Aponta para o nome "RefreshTokens" configurado no MongoDbConfig)
+        var filter = Builders<User>.Filter.ElemMatch(
+            "RefreshTokens", // Nome exato que definimos no SetElementName
+            Builders<RefreshToken>.Filter.Eq(x => x.Token, refreshToken)
+        );
+
+        return await _context.Users.Find(filter).FirstOrDefaultAsync();
     }
 }
