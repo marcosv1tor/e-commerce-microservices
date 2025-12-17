@@ -1,43 +1,36 @@
-﻿using Identity.Application.Commands.RegisterUser; // Registra o MediatR
-using Identity.Application.Interfaces;
-using Identity.Domain.Interfaces;
-using Identity.Infrastructure.Persistence;
-using Identity.Infrastructure.Persistence.Context;
-using Identity.Infrastructure.Persistence.Repositories;
-using Identity.Infrastructure.Services.Token;
+﻿using Basket.Application.Queries.GetBasket;
+using Basket.Domain.Entities;
+using Basket.Domain.Interfaces;
+using Basket.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-// --- Configuração da Aplicação ---
 var builder = WebApplication.CreateBuilder(args);
 
-MongoDbConfig.Configure();
+// 1. Configurar Redis (IDistributedCache)
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "Basket_"; // Prefixo para as chaves não misturarem com outros apps
+});
 
-var services = builder.Services;
-var configuration = builder.Configuration;
-
-
-// 1. ⚙️ Configuração do MongoDB
-// Chama o mapeamento BSON (que você criou no MongoDbConfig)
-MongoDbConfig.Configure();
-
-// Registra o contexto do MongoDB para Injeção de Dependência
-services.AddSingleton<IdentityContext>();
+// 2. Injeção de Dependência do Repositório
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 
-// 2. 🔗 Registro das Interfaces (Injeção de Dependência)
-// Diz ao .NET: Sempre que alguém pedir IUserRepository, entregue UserRepository.
-services.AddScoped<IUserRepository, UserRepository>();
-services.AddScoped<ITokenService, JwtTokenService>();
+// 3. MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBasketQuery).Assembly));
+// 4. Controllers e Swagger
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// 3. 🧠 Configuração do MediatR (CQRS)
-// Adiciona o MediatR e diz para ele procurar Handlers no assembly da Application
-// O typeof() aqui é só para dar um "ponteiro" para onde o MediatR deve procurar.
-services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly));
-
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+// 2. Configurar Autenticação
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -81,13 +74,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
-// 4. 🌐 Configuração Padrão da API
-services.AddControllers();
-services.AddEndpointsApiExplorer();
-
 // Configuração do Swagger com suporte a JWT
-services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity.API", Version = "v1" });
 
@@ -122,18 +110,11 @@ services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-
-// 5. 🛠️ Configuração do Pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
