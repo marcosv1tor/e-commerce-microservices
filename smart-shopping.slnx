@@ -20,10 +20,19 @@
     <Project Path="src/Services/Catalog/Catalog.Domain/Catalog.Domain.csproj" />
     <Project Path="src/Services/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Gateway/">
+    <Project Path="src/Gateway/ApiGateway/ApiGateway.csproj" Id="a9f746b9-18a1-4978-8029-c9ed90342177" />
+  </Folder>
   <Folder Name="/src/Services/Identity/">
     <Project Path="src/Services/Identity/Identity.API/Identity.API.csproj" />
     <Project Path="src/Services/Identity/Identity.Application/Identity.Application.csproj" />
     <Project Path="src/Services/Identity/Identity.Domain/Identity.Domain.csproj" />
     <Project Path="src/Services/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Order/">
+    <Project Path="src/Services/Order/Order.API/Order.API.csproj" Id="6e25dec8-fd66-4f31-b9b5-b89785e7f77e" />
+    <Project Path="src/Services/Order/Order.Application/Order.Application.csproj" Id="f9c5c31f-dd26-4c7f-b0a4-6155bef87865" />
+    <Project Path="src/Services/Order/Order.Domain/Order.Domain.csproj" Id="48f5ffbe-8641-4be2-9bfe-ba850ea9bba3" />
+    <Project Path="src/Services/Order/Order.Infrastructure/Order.Infrastructure.csproj" Id="c8f61cc9-b720-4d14-8d07-6783a8e88531" />
   </Folder>
 </Solution>

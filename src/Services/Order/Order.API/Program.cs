@@ -1,58 +1,45 @@
 ﻿using Basket.API.Consumers.cs;
-using Basket.Application.Queries.GetBasket;
-using Basket.Domain.Entities;
 using Basket.Domain.Interfaces;
 using Basket.Infrastructure.Persistence.Repositories;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using Order.Application.Commands.CheckoutOrder;
+using Order.Domain.Interfaces;
+using Order.Infrastructure.Persistence;
+using Order.Infrastructure.Persistence.Repositories;
 using System.Text;
+// Adicione os usings de Auth e MediatR também
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurar Redis (IDistributedCache)
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
-    options.InstanceName = "Basket_"; // Prefixo para as chaves não misturarem com outros apps
-});
+// 1. Configurar Banco (Mapeamento + Contexto)
+MongoDbConfig.Configure();
+builder.Services.AddSingleton<OrderContext>();
 
-// 2. Injeção de Dependência do Repositório
+// 2. Injeção de Dependência
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-// Configurar MassTransit + RabbitMQ
-builder.Services.AddMassTransit(x =>
-{
-    // Registra o consumer
-    x.AddConsumer<OrderCreatedConsumer>();
+// 3. MediatR (Vamos precisar em breve)
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(CheckoutOrderCommand).Assembly));
 
-    // Configura RabbitMQ
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host("localhost", "/", h => {
-            h.Username("guest");
-            h.Password("guest");
-        });
-
-        // Configura a fila para o consumer
-        cfg.ReceiveEndpoint("basket-order-created", e =>
-        {
-            e.ConfigureConsumer<OrderCreatedConsumer>(context);
-        });
-    });
-});
-
-// 3. MediatR
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBasketQuery).Assembly));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBasketQueryHandler).Assembly));
 // 4. Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379"; 
+    options.InstanceName = "BasketCache";
+});
+// 5. Configurar Auth (JWT) 
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["Secret"];
+
 // 2. Configurar Autenticação
 builder.Services.AddAuthentication(options =>
 {
@@ -100,7 +87,7 @@ builder.Services.AddAuthentication(options =>
 // Configuração do Swagger com suporte a JWT
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Identity.API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Order.API", Version = "v1" });
 
     // Define o esquema de segurança (Botão "Authorize")
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -129,15 +116,37 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Configuração do MassTransit (RabbitMQ)
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<OrderCreatedConsumer>();
+    // Configura para usar RabbitMQ
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        // String de conexão (localhost, guest, guest)
+        cfg.Host("localhost", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
 
+        // Cria a fila automaticamente baseada no consumidor
+        cfg.ReceiveEndpoint("basket-order-created", e =>
+        {
+            e.ConfigureConsumer<OrderCreatedConsumer>(context);
+        });
+
+
+        // Melhores práticas: define serialização padrão
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.MapControllers();
 app.Run();

@@ -1,5 +1,7 @@
 ﻿using Basket.Application.Queries.GetBasket;
 using Catalog.Application.Commands.CreateProduct;
+using Catalog.Application.Queries;
+using Catalog.Application.Queries.GetProducts;
 using Catalog.Domain.Interfaces;
 using Catalog.Infrastructure.Persistence.Configurations;
 using Catalog.Infrastructure.Persistence.Context;
@@ -22,7 +24,10 @@ builder.Services.AddSingleton<CatalogContext>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 // 3. MediatR
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBasketQuery).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetProductsQuery).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetProductsQueryHandler).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetProductByIdQuery).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetProductByIdQueryHandler).Assembly));
 // 4. Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

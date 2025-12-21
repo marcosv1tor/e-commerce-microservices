@@ -2,13 +2,13 @@
 using Basket.Domain.Entities;
 using Basket.Domain.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 
 namespace Basket.Infrastructure.Persistence.Repositories;
 
 public class BasketRepository : IBasketRepository
 {
     private readonly IDistributedCache _redisCache;
-
     public BasketRepository(IDistributedCache redisCache)
     {
         _redisCache = redisCache;
@@ -43,6 +43,11 @@ public class BasketRepository : IBasketRepository
 
     public async Task DeleteBasketAsync(string userName)
     {
+        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379");
+        IDatabase db = redis.GetDatabase();
+        var value = await db.StringGetAsync("Basket" + userName);
+        Console.WriteLine("valor de basket no redis --> ", value);
         await _redisCache.RemoveAsync(userName);
+        await db.KeyDeleteAsync("basket" + userName);
     }
 }
