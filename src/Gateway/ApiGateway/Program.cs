@@ -1,10 +1,13 @@
-using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
 using Common.Logging;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.RateLimiting;
 using Serilog;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog(SerilogExtension.ConfigureLogger);
+builder.Services.AddHealthChecks();
 // ========================================
 // 🎯 CONFIGURAÇÃO DO API GATEWAY (YARP)
 // ========================================
@@ -54,6 +57,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse 
+});
 
 // 2. CORS (deve vir ANTES do YARP)
 app.UseCors("AllowAll");
