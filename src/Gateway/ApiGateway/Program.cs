@@ -16,6 +16,16 @@ builder.Services.AddHealthChecks();
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// Resiliencia - aplica Retry, Circuit Breaker e Timeout para QUALQUER resquisição de saída
+builder.Services.ConfigureHttpClientDefaults(http =>
+{
+    // Adiciona uma estratégia padrão que inclui:
+    // 1. Retry (Tenta 3x com espera exponencial)
+    // 2. Circuit Breaker (Abre o circuito se falhar muitas vezes)
+    // 3. Timeout (Desiste se demorar demais)
+    http.AddStandardResilienceHandler();
+});
+
 // 2. Adicionar CORS (importante para aplicações web frontend)
 builder.Services.AddCors(options =>
 {
