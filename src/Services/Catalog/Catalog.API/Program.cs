@@ -4,12 +4,15 @@ using Catalog.Domain.Interfaces;
 using Catalog.Infrastructure.Persistence.Configurations;
 using Catalog.Infrastructure.Persistence.Context;
 using Catalog.Infrastructure.Persistence.Repositories;
+using Common.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(SerilogExtension.ConfigureLogger);
 
 // 1. Configurar Mongo
 MongoDbConfig.Configure();

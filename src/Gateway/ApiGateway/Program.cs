@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using Common.Logging;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogExtension.ConfigureLogger);
 // ========================================
 // 🎯 CONFIGURAÇÃO DO API GATEWAY (YARP)
 // ========================================

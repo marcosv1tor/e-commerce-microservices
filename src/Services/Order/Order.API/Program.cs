@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Common.Logging;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -6,10 +7,11 @@ using Order.Application.Commands.CheckoutOrder;
 using Order.Domain.Interfaces;
 using Order.Infrastructure.Persistence;
 using Order.Infrastructure.Persistence.Repositories;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogExtension.ConfigureLogger);
 // 1. Configurar Banco (Order Context apenas!)
 MongoDbConfig.Configure();
 builder.Services.AddSingleton<OrderContext>();

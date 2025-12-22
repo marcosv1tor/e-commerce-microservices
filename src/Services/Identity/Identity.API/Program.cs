@@ -1,4 +1,5 @@
-﻿using Identity.Application.Commands.RegisterUser; // Registra o MediatR
+﻿using Common.Logging;
+using Identity.Application.Commands.RegisterUser; // Registra o MediatR
 using Identity.Application.Interfaces;
 using Identity.Domain.Interfaces;
 using Identity.Infrastructure.Persistence;
@@ -9,11 +10,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 // --- Configuração da Aplicação ---
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogExtension.ConfigureLogger);
 MongoDbConfig.Configure();
 
 var services = builder.Services;

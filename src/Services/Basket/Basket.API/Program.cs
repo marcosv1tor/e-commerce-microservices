@@ -3,16 +3,18 @@ using Basket.Application.Queries.GetBasket;
 using Basket.Domain.Entities;
 using Basket.Domain.Interfaces;
 using Basket.Infrastructure.Persistence.Repositories;
+using Common.Logging;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.UseSerilog(SerilogExtension.ConfigureLogger);
 // 1. Configurar Redis (IDistributedCache)
 builder.Services.AddStackExchangeRedisCache(options =>
 {
