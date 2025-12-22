@@ -1,17 +1,12 @@
-﻿using Basket.Application.Queries.GetBasket;
-using Catalog.Application.Commands.CreateProduct;
-using Catalog.Application.Queries;
+﻿using Catalog.Application.Queries;
 using Catalog.Application.Queries.GetProducts;
 using Catalog.Domain.Interfaces;
 using Catalog.Infrastructure.Persistence.Configurations;
 using Catalog.Infrastructure.Persistence.Context;
 using Catalog.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.Tokens.Experimental;
 using Microsoft.OpenApi.Models;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,0 +1,129 @@
+# docker/docker-compose.yml
+# version: '3.8' - REMOVIDO (obsoleto no Docker Compose v2+)
+
+# Configuração global para desabilitar BuildKit
+x-build-config: &build-config
+  network: host
+  
+services:
+  mongo:
+    image: mongo:8.0
+    container_name: ecommerce-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  catalog-api:
+    image: catalog-api
+    container_name: catalog-api
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+      <<: *build-config
+    ports:
+      - "6001:8080" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MongoDbConnection=mongodb://admin:123456@mongo:27017
+    depends_on:
+      - mongo
+
+  identity-api:
+    image: identity-api
+    container_name: identity-api
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+      <<: *build-config
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MongoDbConnection=mongodb://admin:123456@mongo:27017
+
+  basket-api:
+    image: basket-api
+    container_name: basket-api
+    build:
+      context: .
+      dockerfile: src/Services/Basket/Basket.API/Dockerfile
+      <<: *build-config
+    ports:
+      - "7001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Redis=redis:6379
+    depends_on:
+      - redis
+      - rabbitmq
+
+  order-api:
+    image: order-api
+    container_name: order-api
+    build:
+      context: .
+      dockerfile: src/Services/Order/Order.API/Dockerfile
+      <<: *build-config
+    ports:
+      - "8001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MongoDbConnection=mongodb://admin:123456@mongo:27017
+    depends_on:
+      - mongo
+      - rabbitmq
+
+  api-gateway:
+    image: api-gateway
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: src/Gateway/ApiGateway/Dockerfile
+      <<: *build-config
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      - identity-api
+      - catalog-api
+      - basket-api
+      - order-api
+
+
+  seq:
+    image: datalust/seq:2024
+    ports:
+      - "5341:80"
+    environment:
+      ACCEPT_EULA: Y
+
+      
+
+volumes:
+  mongo_data:
+  redis_data:
+
+  
+
+

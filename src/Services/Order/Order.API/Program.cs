@@ -1,46 +1,35 @@
-﻿using Basket.API.Consumers.cs;
-using Basket.Domain.Interfaces;
-using Basket.Infrastructure.Persistence.Repositories;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Order.Application.Commands.CheckoutOrder;
 using Order.Domain.Interfaces;
 using Order.Infrastructure.Persistence;
 using Order.Infrastructure.Persistence.Repositories;
 using System.Text;
-// Adicione os usings de Auth e MediatR também
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configurar Banco (Mapeamento + Contexto)
+// 1. Configurar Banco (Order Context apenas!)
 MongoDbConfig.Configure();
 builder.Services.AddSingleton<OrderContext>();
 
-// 2. Injeção de Dependência
+// 2. Injeção de Dependência (Apenas repositórios de Order)
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IBasketRepository, BasketRepository>();
-// 3. MediatR (Vamos precisar em breve)
+// REMOVIDO: IBasketRepository (O Order não deve mexer no carrinho diretamente)
+
+// 3. MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(CheckoutOrderCommand).Assembly));
 
 // 4. Controllers e Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = "localhost:6379"; 
-    options.InstanceName = "BasketCache";
-});
 // 5. Configurar Auth (JWT) 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"];
 
-// 2. Configurar Autenticação
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -48,96 +37,56 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-    var secretKey = jwtSettings["Secret"];
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)),
-
         ClockSkew = TimeSpan.Zero
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine($"🔥🔥 AUTH FALHOU: {context.Exception.Message}");
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = context =>
-        {
-            Console.WriteLine("✅ AUTH SUCESSO: Token validado!");
-            return Task.CompletedTask;
-        },
-        OnChallenge = context =>
-        {
-            Console.WriteLine($"🛡️ AUTH CHALLENGE: {context.Error}, {context.ErrorDescription}");
-            return Task.CompletedTask;
-        }
     };
 });
 
-// Configuração do Swagger com suporte a JWT
+// Configuração do Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Order.API", Version = "v1" });
-
-    // Define o esquema de segurança (Botão "Authorize")
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Insira o token JWT desta maneira: {seu_token}",
+        Description = "Insira o token JWT: {seu_token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
             Array.Empty<string>()
         }
     });
 });
 
-// Configuração do MassTransit (RabbitMQ)
+// 6. Configuração do MassTransit (RabbitMQ) - MODO PUBLICADOR APENAS
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<OrderCreatedConsumer>();
-    // Configura para usar RabbitMQ
     x.UsingRabbitMq((context, cfg) =>
     {
-        // String de conexão (localhost, guest, guest)
-        cfg.Host("localhost", "/", h =>
+        cfg.Host("rabbit", "/", h => // Atenção: "rabbit" ou "localhost" dependendo se roda no docker ou fora
         {
             h.Username("guest");
             h.Password("guest");
         });
 
-        // Cria a fila automaticamente baseada no consumidor
-        cfg.ReceiveEndpoint("basket-order-created", e =>
-        {
-            e.ConfigureConsumer<OrderCreatedConsumer>(context);
-        });
-
-
-        // Melhores práticas: define serialização padrão
+        // Não precisamos configurar ReceiveEndpoint aqui, pois não estamos ouvindo nada.
         cfg.ConfigureEndpoints(context);
     });
 });
