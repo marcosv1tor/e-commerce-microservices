@@ -35,4 +35,10 @@
     <Project Path="src/Services/Order/Order.Domain/Order.Domain.csproj" Id="48f5ffbe-8641-4be2-9bfe-ba850ea9bba3" />
     <Project Path="src/Services/Order/Order.Infrastructure/Order.Infrastructure.csproj" Id="c8f61cc9-b720-4d14-8d07-6783a8e88531" />
   </Folder>
+  <Folder Name="/src/Services/Payment/">
+    <Project Path="src/Services/Payment/Payment.API/Payment.API.csproj" Id="f780efb1-58a8-4ce0-b11a-df7e96e62dc7" />
+    <Project Path="src/Services/Payment/Payment.Application/Payment.Application.csproj" Id="4c2fa7c3-7ca3-4a2d-8634-40fd4a722ac0" />
+    <Project Path="src/Services/Payment/Payment.Domain/Payment.Domain.csproj" Id="7ac4a7a2-e1bf-4e9c-bb8b-2622bc93047b" />
+    <Project Path="src/Services/Payment/Payment.Infrastructure/Payment.Infrastructure.csproj" Id="83d9ac54-6d60-4970-9a13-71bd8825a878" />
+  </Folder>
 </Solution>
