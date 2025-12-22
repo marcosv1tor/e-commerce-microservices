@@ -1,4 +1,5 @@
 ﻿using Common.Logging;
+using HealthChecks.UI.Client;
 using Identity.Application.Commands.RegisterUser; // Registra o MediatR
 using Identity.Application.Interfaces;
 using Identity.Domain.Interfaces;
@@ -7,9 +8,11 @@ using Identity.Infrastructure.Persistence.Context;
 using Identity.Infrastructure.Persistence.Repositories;
 using Identity.Infrastructure.Services.Token;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Serilog;
 using System.Text;
 
@@ -122,7 +125,21 @@ services.AddSwaggerGen(c =>
 
 
 
+var mongoCnn = builder.Configuration.GetConnectionString("MongoDbConnection");
+builder.Services.AddHealthChecks()
+    .AddMongoDb(
+        sp => new MongoClient(mongoCnn),
+        name: "mongodb",
+        timeout: TimeSpan.FromSeconds(3));
+
+
 var app = builder.Build();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 
 
 // 5. 🛠️ Configuração do Pipeline HTTP

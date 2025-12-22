@@ -5,9 +5,13 @@ using Catalog.Infrastructure.Persistence.Configurations;
 using Catalog.Infrastructure.Persistence.Context;
 using Catalog.Infrastructure.Persistence.Repositories;
 using Common.Logging;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Serilog;
 using System.Text;
 
@@ -114,9 +118,20 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+var mongoCnn = builder.Configuration.GetConnectionString("MongoDbConnection");
+builder.Services.AddHealthChecks()
+    .AddMongoDb(
+        sp => new MongoClient(mongoCnn),
+        name: "mongodb",
+        timeout: TimeSpan.FromSeconds(3));
 
 
 var app = builder.Build();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -124,7 +139,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
-app.UseAuthorization(); 
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

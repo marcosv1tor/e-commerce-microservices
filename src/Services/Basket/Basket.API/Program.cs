@@ -4,12 +4,17 @@ using Basket.Domain.Entities;
 using Basket.Domain.Interfaces;
 using Basket.Infrastructure.Persistence.Repositories;
 using Common.Logging;
+using HealthChecks.UI.Client;
 using MassTransit;
+using MassTransit.RabbitMqTransport;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using Serilog;
 using System.Text;
 
@@ -33,7 +38,7 @@ builder.Services.AddMassTransit(x =>
     // Configura RabbitMQ
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("localhost", "/", h => {
+        cfg.Host("rabbitmq", "/", h => {
             h.Username("guest");
             h.Password("guest");
         });
@@ -131,9 +136,26 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
+builder.Services.AddHealthChecks()
+    .AddRedis("redis:6379", name: "redis") // Nome do container do Redis
+    .AddRabbitMQ(
+        sp => {
+            var factory = new ConnectionFactory
+            {
+                Uri = new Uri("amqp://guest:guest@rabbitmq:5672")
+            };
+            return factory.CreateConnectionAsync();
+        },
+        name: "rabbitmq",
+        timeout: TimeSpan.FromSeconds(3));
 
 var app = builder.Build();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 
 if (app.Environment.IsDevelopment())
 {

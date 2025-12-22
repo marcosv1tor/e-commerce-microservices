@@ -1,12 +1,16 @@
 ﻿using Common.Logging;
+using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Order.Application.Commands.CheckoutOrder;
 using Order.Domain.Interfaces;
 using Order.Infrastructure.Persistence;
 using Order.Infrastructure.Persistence.Repositories;
+using RabbitMQ.Client;
 using Serilog;
 using System.Text;
 
@@ -82,7 +86,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbit", "/", h => // Atenção: "rabbit" ou "localhost" dependendo se roda no docker ou fora
+        cfg.Host("rabbitmq", "/", h => // Atenção: "rabbit" ou "localhost" dependendo se roda no docker ou fora
         {
             h.Username("guest");
             h.Password("guest");
@@ -93,7 +97,30 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
+var mongoCnn = builder.Configuration.GetConnectionString("MongoDbConnection");
+builder.Services.AddHealthChecks()
+    .AddMongoDb(
+        sp => new MongoClient(mongoCnn),
+        name: "mongodb",
+        timeout: TimeSpan.FromSeconds(3))
+    .AddRabbitMQ(
+        sp => {
+            var factory = new ConnectionFactory
+            {
+                Uri = new Uri("amqp://guest:guest@rabbitmq:5672")
+            };
+            return factory.CreateConnectionAsync();
+        },
+        name: "rabbitmq",
+        timeout: TimeSpan.FromSeconds(3));
+
+
 var app = builder.Build();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
