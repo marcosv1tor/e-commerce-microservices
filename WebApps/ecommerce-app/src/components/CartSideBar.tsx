@@ -54,30 +54,36 @@ export function CartSidebar() {
   };
 
   const handleCheckout = async () => {
-     if(!cart || cart.items.length === 0) return;
-     
-     // Mock de Checkout
-     const checkoutData = {
-         userName: user,
-         totalPrice: calculateTotal(),
-         firstName: "Marcos", lastName: "Vitor",
-         emailAddress: "marcos@teste.com",
-         addressLine: "Rua Developer, 10",
-         country: "Brasil", state: "SP", zipCode: "12345-000",
-         cardName: "Visa", cardNumber: "1234567890123456",
-         expiration: "12/30", cvv: "123", paymentMethod: 1
-     };
+  if (!cart || cart.items.length === 0) return;
 
-     try {
-         await api.post('/basket/checkout', checkoutData);
-         alert("✅ Pedido Realizado com Sucesso!");
-         close();
-         queryClient.setQueryData(['basket', user], { userName: user, items: [] });
-     } catch (error) {
-         console.error(error);
-         alert("Erro ao realizar checkout.");
-     }
+  // Checkout payload
+  const payload = {
+    address: {
+      street: "Rua Developer, 10",
+      city: "São Paulo",
+      state: "SP",
+      country: "Brasil",
+      zipCode: "12345-000",
+    },
+    items: cart.items.map(item => ({
+      productId: item.productId,
+      productName: item.productName,
+      unitPrice: item.price,
+      quantity: item.quantity,
+      pictureUrl: item.pictureUrl || "",
+    })),
   };
+
+  try {
+    await api.post("/order/checkout", payload);
+    alert("✅ Pedido Realizado com Sucesso!");
+    close();
+    queryClient.setQueryData(["order", user], { userName: user, items: [] });
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao realizar checkout.");
+  }
+};
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>

@@ -1,26 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/axios';
 import { useAuthStore } from '../store/useAuthStore';
-import { type Order } from '../types/Order';
+import { type Order, type OrderDetail } from '../types/Order';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
 
 export function OrdersPage() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
-
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   // Busca os pedidos do usuário
   const { data: orders, isLoading, isError } = useQuery({
     queryKey: ['orders', user],
     queryFn: async () => {
       // Ajuste a rota conforme seu Controller da Order.API
       // Geralmente é: GET /api/v1/order/{userName}
-      const response = await api.get<Order[]>(`/order/${user}`); 
+      const response = await api.get<Order[]>(`/order`); 
       return response.data;
     },
     enabled: !!user, // Só busca se tiver usuário logado
   });
-
+  const { data: orderDetail } = useQuery({
+  queryKey: ['orderDetail', selectedOrderId],
+  queryFn: async () => {
+    const response = await api.get<OrderDetail>(`/order/${selectedOrderId}`);
+    return response.data;
+  },
+  enabled: !!selectedOrderId, // só busca se houver id selecionado
+});
   if (isLoading) return <div className="min-h-screen flex items-center justify-center text-gray-500">Carregando seus pedidos...</div>;
   if (isError) return <div className="min-h-screen flex items-center justify-center text-red-500">Erro ao carregar pedidos via Gateway.</div>;
 
@@ -47,44 +55,43 @@ export function OrdersPage() {
               <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
                 {/* Cabeçalho do Pedido */}
                 <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center flex-wrap gap-2">
-                  <div>
-                    <p className="text-sm text-gray-500">Data do Pedido</p>
-                    <p className="font-medium">{new Date(order.orderDate).toLocaleDateString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Total</p>
-                    <p className="font-bold text-green-600">R$ {order.totalPrice.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Status</p>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold 
-                      ${order.status === 'Paid' ? 'bg-green-100 text-green-800' : 
-                        order.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-gray-100 text-gray-800'}`}>
-                      {order.status}
-                    </span>
-                  </div>
+                                {orders?.map(order => (
+                <div key={order.id} className="p-4 border rounded mb-2">
+                    <p>Pedido #{order.id}</p>
+                    <button
+                    onClick={() => setSelectedOrderId(order.id)}
+                    className="mt-2 px-3 py-1 bg-blue-600 text-white rounded"
+                    >
+                    Ver detalhes
+                    </button>
+                </div>
+                ))}
                 </div>
 
                 {/* Itens do Pedido */}
-                <div className="px-6 py-4">
-                  <ul className="divide-y divide-gray-100">
-                    {order.orderItems.map((item, index) => (
-                      <li key={index} className="py-3 flex justify-between items-center">
-                        <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 bg-gray-100 rounded flex items-center justify-center text-xl">
-                            📦
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800">{item.productName}</p>
-                            <p className="text-sm text-gray-500">Qtd: {item.units}</p>
-                          </div>
-                        </div>
-                        <p className="font-medium text-gray-600">R$ {item.unitPrice.toFixed(2)}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {orderDetail && (
+                    <div className="px-6 py-4">
+                        <h3 className="text-lg font-bold mb-4">Itens do Pedido</h3>
+                        <ul className="divide-y divide-gray-100">
+                        {orderDetail.orderItems.map((item, index) => (
+                            <li key={index} className="py-3 flex justify-between items-center">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 bg-gray-100 rounded flex items-center justify-center text-xl">
+                                📦
+                                </div>
+                                <div>
+                                <p className="font-medium text-gray-800">{item.productName}</p>
+                                <p className="text-sm text-gray-500">Qtd: {item.units}</p>
+                                </div>
+                            </div>
+                            <p className="font-medium text-gray-600">
+                                R$ {item.unitPrice.toFixed(2)}
+                            </p>
+                            </li>
+                        ))}
+                        </ul>
+                    </div>
+                    )}
               </div>
             ))
           )}

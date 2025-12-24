@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { CatalogPage } from './pages/CatalogPage';
+import { OrdersPage } from './pages/OrderPage';
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
         
         {/* Redireciona raiz para login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Rota para Meus Pedidos */}
+        <Route path="/orders" element={<OrdersPage />} />
       </Routes>
     </BrowserRouter>
   );

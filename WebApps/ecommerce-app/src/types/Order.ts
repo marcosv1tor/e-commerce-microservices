@@ -14,3 +14,21 @@ export interface Order {
   orderDate: string;
   orderItems: OrderItem[];
 }
+
+export interface OrderDetail {
+  id: string;
+  orderItems: {
+    productName: string;
+    units: number;
+    unitPrice: number;
+  }[];
+}
+
+
+export interface Adress {
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    zipCode: string;
+}

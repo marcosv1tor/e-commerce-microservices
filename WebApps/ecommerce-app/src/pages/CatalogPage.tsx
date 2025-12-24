@@ -188,6 +188,12 @@ export function CatalogPage() {
                   <p className="font-bold text-gray-900">{user}</p>
                 </div>
                 <button 
+                    onClick={() => navigate('/orders')} 
+                    className="text-sm text-blue-400 hover:text-blue-300 underline"
+                    >
+                    Meus Pedidos
+                    </button>
+                <button 
                   onClick={handleLogout} 
                   className="px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors border border-red-200"
                 >
