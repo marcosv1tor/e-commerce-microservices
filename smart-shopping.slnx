@@ -29,6 +29,9 @@
     <Project Path="src/Services/Identity/Identity.Domain/Identity.Domain.csproj" />
     <Project Path="src/Services/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Services/Notification/">
+    <Project Path="src/Services/Notification/Notification.API/Notification.API.csproj" Id="8808c4ac-042b-4bb3-8382-4d580dd6d8dc" />
+  </Folder>
   <Folder Name="/src/Services/Order/">
     <Project Path="src/Services/Order/Order.API/Order.API.csproj" Id="6e25dec8-fd66-4f31-b9b5-b89785e7f77e" />
     <Project Path="src/Services/Order/Order.Application/Order.Application.csproj" Id="f9c5c31f-dd26-4c7f-b0a4-6155bef87865" />
