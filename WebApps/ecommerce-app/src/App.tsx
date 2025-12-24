@@ -1,19 +1,21 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { LoginPage } from './pages/LoginPage';
+import { CatalogPage } from './pages/CatalogPage';
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-        <h1 className="text-4xl font-bold text-blue-600 mb-4">
-          E-Commerce Microservices 🛒
-        </h1>
-        <p className="text-gray-600">
-          Frontend rodando com React, TypeScript e Tailwind!
-        </p>
-        <button className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-          Começar as Compras
-        </button>
-      </div>
-    </div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        
+        {/* Rota Protegida (Simples por enquanto) */}
+        <Route path="/catalog" element={<CatalogPage />} />
+        
+        {/* Redireciona raiz para login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
