@@ -69,7 +69,7 @@ export function CartSidebar() {
       productId: item.productId,
       productName: item.productName,
       unitPrice: item.price,
-      quantity: item.quantity,
+      units: item.quantity,
       pictureUrl: item.pictureUrl || "",
     })),
   };
@@ -79,6 +79,7 @@ export function CartSidebar() {
     alert("✅ Pedido Realizado com Sucesso!");
     close();
     queryClient.setQueryData(["order", user], { userName: user, items: [] });
+    removeItem(cart.items.map(i => i.productId).join(","));
   } catch (error) {
     console.error(error);
     alert("Erro ao realizar checkout.");

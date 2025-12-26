@@ -24,6 +24,15 @@ public class OrderRepository : IOrderRepository
         await _context.Orders.ReplaceOneAsync(o => o.Id == order.Id, order);
     }
 
+    public async Task<bool> DeleteAsync(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return false;
+
+        var result = await _context.Orders.DeleteOneAsync(o => o.Id == id);
+        return result.DeletedCount > 0 ;
+    }
+
     public async Task<Domain.Entities.Order?> GetByIdAsync(string id)
     {
         return await _context.Orders

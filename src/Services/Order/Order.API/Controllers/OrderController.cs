@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Order.Application.Commands.CheckoutOrder;
 using Order.Application.DTOs;
+using Order.Application.Queries;
 using Order.Application.Queries.GetOrderById;
 using Order.Application.Queries.GetOrders;
 using Order.Application.ViewModels;
@@ -88,6 +89,22 @@ public class OrderController : ControllerBase
 
         return Ok(result.Value);
     }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status304NotModified)]
+    public async Task<bool> DeleteOrderAsync(string id)
+    { 
+        var query = new DeleteOrderByIdAsyncQuery(id);
+        var result = await _mediator.Send(query);
+
+        if (result.IsFailure)
+            return false;
+
+        return true;
+    }
+
 }
 
 // Classe auxiliar para receber o JSON do body (sem o ID do usuário)

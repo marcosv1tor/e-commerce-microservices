@@ -1,29 +1,26 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["src/Services/Basket/Basket.API/Basket.API.csproj", "src/Services/Basket/Basket.API/"]
-COPY ["src/Services/Basket/Basket.Application/Basket.Application.csproj", "src/Services/Basket/Basket.Application/"]
-COPY ["src/Services/Basket/Basket.Domain/Basket.Domain.csproj", "src/Services/Basket/Basket.Domain/"]
-COPY ["src/Services/Basket/Basket.Infrastructure/Basket.Infrastructure.csproj", "src/Services/Basket/Basket.Infrastructure/"]
+COPY ["src/Services/Notification/Notification.API/Notification.API.csproj", "src/Services/Notification/Notification.API/"]
 COPY ["src/BuildingBlocks/Common/Common.csproj", "src/BuildingBlocks/Common/"]
+COPY ["src/BuildingBlocks/EventBus/EventBus.csproj", "src/BuildingBlocks/EventBus/"]
 
-RUN dotnet restore "./src/Services/Basket/Basket.API/Basket.API.csproj"
+RUN dotnet restore "src/Services/Notification/Notification.API/Notification.API.csproj"
 
 COPY . .
-WORKDIR "/src/src/Services/Basket/Basket.API"
-RUN dotnet build "./Basket.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/Services/Notification/Notification.API"
+RUN dotnet build "Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Basket.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Notification.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Basket.API.dll"]
+ENTRYPOINT ["dotnet", "Notification.API.dll"]

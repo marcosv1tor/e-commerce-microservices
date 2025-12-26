@@ -56,6 +56,16 @@ builder.Services.AddControllers();
 // 4. OpenAPI/Swagger (opcional, para documentação)
 builder.Services.AddOpenApi();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", b =>
+    {
+        b.AllowAnyOrigin()      // Para facilitar o dev. Em prod, use .WithOrigins("http://seu-site.com")
+         .AllowAnyMethod()
+         .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // ========================================
@@ -74,8 +84,10 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse 
 });
 
+
+
 // 2. CORS (deve vir ANTES do YARP)
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 
 // 3. HTTPS Redirect
 app.UseHttpsRedirection();
