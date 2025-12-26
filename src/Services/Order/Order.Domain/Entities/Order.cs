@@ -6,12 +6,12 @@ namespace Order.Domain.Entities;
 // Enum simples para status
 public enum OrderStatus
 {
-    Submitted = 1,
-    AwaitingValidation = 2,
-    StockConfirmed = 3,
-    Paid = 4,
-    Shipped = 5,
-    Cancelled = 6
+    Realizado = 1,
+    Aguardando_Validacao = 2,
+    Em_Estoque = 3,
+    Pago = 4,
+    Enviado = 5,
+    Cancelado = 6
 }
 
 public class Order : AggregateRoot
@@ -36,7 +36,7 @@ public class Order : AggregateRoot
         BuyerId = buyerId;
         UserName = userName;
         Address = address;
-        Status = OrderStatus.Submitted;
+        Status = OrderStatus.Realizado;
         OrderDate = DateTime.UtcNow;
     }
 
@@ -62,9 +62,9 @@ public class Order : AggregateRoot
     // Métodos para mudar status (State Machine simples)
     public void SetPaidStatus()
     {
-        if (Status == OrderStatus.Submitted)
+        if (Status == OrderStatus.Realizado)
         {
-            Status = OrderStatus.Paid;
+            Status = OrderStatus.Pago;
             MarkAsUpdated();
         }
     }
