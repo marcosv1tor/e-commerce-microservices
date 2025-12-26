@@ -55,23 +55,22 @@ export function OrdersPage() {
               <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
                 {/* Cabeçalho do Pedido */}
                 <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center flex-wrap gap-2">
-                                {orders?.map(order => (
-                <div key={order.id} className="p-4 border rounded mb-2">
-                    <p>Pedido #{order.id}</p>
-                    <button
+                  <div>
+                    <p className="font-semibold text-gray-900">Pedido #{order.id}</p>
+                    <p className="text-sm text-gray-500">Data: {new Date(order.orderDate).toLocaleDateString('pt-BR')}</p>
+                  </div>
+                  <button
                     onClick={() => setSelectedOrderId(order.id)}
-                    className="mt-2 px-3 py-1 bg-blue-600 text-white rounded"
-                    >
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  >
                     Ver detalhes
-                    </button>
-                </div>
-                ))}
+                  </button>
                 </div>
 
                 {/* Itens do Pedido */}
-                {orderDetail && (
+                {selectedOrderId === order.id && orderDetail && (
                     <div className="px-6 py-4">
-                        <h3 className="text-lg font-bold mb-4">Itens do Pedido</h3>
+                        <h3 className="text-lg font-bold mb-4">Itens do Pedido - Status: {order.status}</h3>
                         <ul className="divide-y divide-gray-100">
                         {orderDetail.orderItems.map((item, index) => (
                             <li key={index} className="py-3 flex justify-between items-center">

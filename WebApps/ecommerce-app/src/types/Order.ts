@@ -18,6 +18,7 @@ export interface Order {
 export interface OrderDetail {
   id: string;
   orderItems: {
+    categorie: string;
     productName: string;
     units: number;
     unitPrice: number;
