@@ -183,18 +183,18 @@ ecommerce-microservices/
 - [x] Building Blocks compartilhados
 
 ### Fase 2: Core Services 📋
-- [ ] Catalog Service
-- [ ] Basket Service
-- [ ] Order Service
+- [X] Catalog Service
+- [X] Basket Service
+- [X] Order Service
 
 ### Fase 3: Integrações 📋
-- [ ] Payment Service
-- [ ] Notification Service
-- [ ] Message Bus configurado
+- [X] Payment Service
+- [X] Notification Service
+- [X] Message Bus configurado
 
 ### Fase 4: Gateway & Frontend 📋
-- [ ] API Gateway (YARP)
-- [ ] Customer App (React)
+- [X] API Gateway (YARP)
+- [X] Customer App (React)
 - [ ] Admin Dashboard (React)
 
 ### Fase 5: Produção 📋
