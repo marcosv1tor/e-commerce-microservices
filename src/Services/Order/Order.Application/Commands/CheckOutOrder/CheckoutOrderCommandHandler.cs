@@ -46,7 +46,7 @@ public class CheckoutOrderCommandHandler : IRequestHandler<CheckoutOrderCommand,
         // ⬇️ ADICIONE ESTE LOG
         Console.WriteLine($"🚀 PUBLICANDO EVENTO para userName: {request.UserName}");
 
-        var eventMessage = new OrderCreatedIntegrationEvent(request.UserName);
+        var eventMessage = new OrderCreatedIntegrationEvent(order.Id, request.UserName);
         await _publishEndpoint.Publish(eventMessage, cancellationToken);
 
         // ⬇️ ADICIONE ESTE LOG TAMBÉM

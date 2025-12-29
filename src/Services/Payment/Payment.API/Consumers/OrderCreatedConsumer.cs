@@ -16,7 +16,7 @@ public class OrderCreatedConsumer : IConsumer<OrderCreatedIntegrationEvent>
 
     public async Task Consume(ConsumeContext<OrderCreatedIntegrationEvent> context)
     {
-        _logger.LogInformation("💳 Processando pagamento para o Pedido: {OrderId} do usuário {UserName}", context.Message.Id, context.Message.UserName);
+        _logger.LogInformation("💳 Processando pagamento para o Pedido: {OrderId} do usuário {UserName}", context.Message.OrderId, context.Message.UserName);
 
         // SIMULAÇÃO DE PROCESSAMENTO (Delay de 2s)
         await Task.Delay(2000);
@@ -27,17 +27,17 @@ public class OrderCreatedConsumer : IConsumer<OrderCreatedIntegrationEvent>
 
         if (paymentSuccess)
         {
-            _logger.LogInformation("✅ Pagamento Aprovado para o Pedido: {OrderId}", context.Message.Id);
+            _logger.LogInformation("✅ Pagamento Aprovado para o Pedido: {OrderId}", context.Message.OrderId);
 
             // Avisa o mundo que deu certo
-            await _publishEndpoint.Publish(new OrderPaymentSucceededIntegrationEvent(context.Message.Id));
+            await _publishEndpoint.Publish(new OrderPaymentSucceededIntegrationEvent(Guid.Parse(context.Message.OrderId)));
         }
         else
         {
-            _logger.LogError("❌ Pagamento Recusado para o Pedido: {OrderId}", context.Message.Id);
+            _logger.LogError("❌ Pagamento Recusado para o Pedido: {OrderId}", context.Message.OrderId);
 
             // Avisa o mundo que falhou
-            await _publishEndpoint.Publish(new OrderPaymentFailedIntegrationEvent(context.Message.Id, "Saldo insuficiente (Mock)"));
+            await _publishEndpoint.Publish(new OrderPaymentFailedIntegrationEvent(Guid.Parse(context.Message.OrderId), "Saldo insuficiente (Mock)"));
         }
     }
 }

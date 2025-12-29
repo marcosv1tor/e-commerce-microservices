@@ -16,10 +16,11 @@ builder.Services.AddMassTransit(x =>
 {
     // Adiciona o consumidor que criamos
     x.AddConsumer<OrderCreatedConsumer>();
+    var rabbitHost = builder.Configuration["RabbitMQ:Host"] ?? "rabbitmq";
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq", "/", h =>
+        cfg.Host(rabbitHost, "/", h => // para debug usar "localhost", para docker usar "rabbitmq"
         {
             h.Username("guest");
             h.Password("guest");

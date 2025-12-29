@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/axios';
 import { type ShoppingCart } from '../types/Basket';
 import { useAuthStore } from '../store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 export function CartSidebar() {
   // 1. Pega o estado e a função de fechar do Zustand
@@ -13,7 +14,7 @@ export function CartSidebar() {
   
   // LOG PARA DEBUG: Abra o F12 e veja se isso muda para 'true' ao clicar
   console.log("🛒 ESTADO DO CARRINHO:", isOpen);
-
+  const navigate = useNavigate();   
   const user = useAuthStore((state) => state.user);
   const queryClient = useQueryClient();
 
@@ -53,38 +54,38 @@ export function CartSidebar() {
     return cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const handleCheckout = async () => {
-  if (!cart || cart.items.length === 0) return;
+//   const handleCheckout = async () => {
+//   if (!cart || cart.items.length === 0) return;
 
-  // Checkout payload
-  const payload = {
-    address: {
-      street: "Rua Developer, 10",
-      city: "São Paulo",
-      state: "SP",
-      country: "Brasil",
-      zipCode: "12345-000",
-    },
-    items: cart.items.map(item => ({
-      productId: item.productId,
-      productName: item.productName,
-      unitPrice: item.price,
-      units: item.quantity,
-      pictureUrl: item.pictureUrl || "",
-    })),
-  };
+//   // Checkout payload
+//   const payload = {
+//     address: {
+//       street: "Rua Developer, 10",
+//       city: "São Paulo",
+//       state: "SP",
+//       country: "Brasil",
+//       zipCode: "12345-000",
+//     },
+//     items: cart.items.map(item => ({
+//       productId: item.productId,
+//       productName: item.productName,
+//       unitPrice: item.price,
+//       units: item.quantity,
+//       pictureUrl: item.pictureUrl || "",
+//     })),
+//   };
 
-  try {
-    await api.post("/order/checkout", payload);
-    alert("✅ Pedido Realizado com Sucesso!");
-    close();
-    queryClient.setQueryData(["order", user], { userName: user, items: [] });
-    removeItem(cart.items.map(i => i.productId).join(","));
-  } catch (error) {
-    console.error(error);
-    alert("Erro ao realizar checkout.");
-  }
-};
+//   try {
+//     await api.post("/order/checkout", payload);
+//     alert("✅ Pedido Realizado com Sucesso!");
+//     close();
+//     queryClient.setQueryData(["order", user], { userName: user, items: [] });
+//     removeItem(cart.items.map(i => i.productId).join(","));
+//   } catch (error) {
+//     console.error(error);
+//     alert("Erro ao realizar checkout.");
+//   }
+// };
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -241,7 +242,7 @@ export function CartSidebar() {
                         </div>
                         
                         <button
-                          onClick={handleCheckout}
+                          onClick={() => navigate('/checkout')}
                           disabled={!cart?.items || cart.items.length === 0}
                           className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                         >

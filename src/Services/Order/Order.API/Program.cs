@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using Order.API.Consumers;
 using Order.Application.Commands.CheckoutOrder;
 using Order.Domain.Interfaces;
 using Order.Infrastructure.Persistence;
 using Order.Infrastructure.Persistence.Repositories;
 using RabbitMQ.Client;
 using Serilog;
+using SharpCompress.Compressors.Xz;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -84,16 +86,21 @@ builder.Services.AddSwaggerGen(c =>
 // 6. Configuração do MassTransit (RabbitMQ) - MODO PUBLICADOR APENAS
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<OrderPaymentSucceededConsumer>();
+    var rabbitHost = builder.Configuration["RabbitMQ:Host"] ?? "rabbitmq";
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq", "/", h => // Atenção: "rabbit" ou "localhost" dependendo se roda no docker ou fora
+        cfg.Host(rabbitHost, "/", h => // Atenção: "rabbitmq" ou "localhost" dependendo se roda no docker ou fora
         {
             h.Username("guest");
             h.Password("guest");
         });
 
-        // Não precisamos configurar ReceiveEndpoint aqui, pois não estamos ouvindo nada.
-        cfg.ConfigureEndpoints(context);
+        cfg.ReceiveEndpoint("order-payment-succeeded", e =>
+        {
+            e.ConfigureConsumer<OrderPaymentSucceededConsumer>(context);
+
+        });
     });
 });
 
