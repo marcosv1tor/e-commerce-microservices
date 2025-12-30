@@ -14,5 +14,6 @@ namespace Identity.Application.Commands.RegisterUser;
 public record RegisterUserCommand(
     string Name,
     string Email,
-    string Password
+    string Password,
+    string Role
 ) : IRequest<Result<Guid>>;

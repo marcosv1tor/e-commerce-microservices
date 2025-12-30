@@ -33,9 +33,12 @@ public class User : AggregateRoot
 
     // 🎓 FACTORY METHOD
     // Cria um usuário garantindo que ele nasça válido
-    public static Result<User> Register(string name, Email email, string passwordHash, string role = "User")
+    public static Result<User> Register(string name, Email email, string passwordHash, string role )
     {
         // Validações básicas de Domínio
+        if (string.IsNullOrEmpty(role))
+            role = "User";
+
         if (string.IsNullOrWhiteSpace(name))
             return Result<User>.Failure("Nome não pode ser vazio");
 

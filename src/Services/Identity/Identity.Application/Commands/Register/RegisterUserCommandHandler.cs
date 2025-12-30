@@ -38,7 +38,8 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         var userResult = User.Register(
             request.Name,
             emailResult.Value,
-            passwordHash
+            passwordHash,
+            request.Role           
         );
 
         if (userResult.IsFailure)
