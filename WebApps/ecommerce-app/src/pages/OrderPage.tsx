@@ -58,7 +58,7 @@ export function OrdersPage() {
                 {/* Cabeçalho do Pedido */}
                 <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center flex-wrap gap-2">
                   <div>
-                    <p className="font-semibold text-gray-900">Pedido #{order.id}</p>
+                    <p className="font-semibold text-gray-900">Pedido #{order.orderCode}</p>
                     <p className="text-sm text-gray-500">Data: {new Date(order.orderDate).toLocaleDateString('pt-BR')}</p>
                   </div>
                   <button
