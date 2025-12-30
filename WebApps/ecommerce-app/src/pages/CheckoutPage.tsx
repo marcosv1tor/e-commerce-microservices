@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ShoppingCart } from "../types/Basket";
 import { api } from "../api/axios";
 import { useState } from "react";
+import Header from "../components/Header";
 
 export function CheckoutPage() {
 
@@ -165,49 +166,7 @@ export function CheckoutPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
-
-            {/* Header Moderno */}
-            <header className="bg-white/80 backdrop-blur-lg shadow-lg sticky top-0 z-40 border-b border-gray-200">
-                <div className="container mx-auto px-6 py-5">
-                    <div className="flex justify-between items-center">
-                        {/* Logo e Título */}
-                        <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate('/catalog')}>
-                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
-                                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                                    E-Commerce
-                                </h1>
-                                <p className="text-xs text-gray-500">Microservices Architecture</p>
-                            </div>
-                        </div>
-
-                        {/* Informações do Usuário */}
-                        <div className="flex items-center gap-4 border-l border-gray-300 pl-6">
-                            <div className="text-right">
-                                <p className="text-sm text-gray-500">Bem-vindo,</p>
-                                <p className="font-bold text-gray-900">{user}</p>
-                            </div>
-                            <button
-                                onClick={() => navigate('/orders')}
-                                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                            >
-                                Meus Pedidos
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="px-4 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-colors border border-red-200"
-                            >
-                                Sair
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
+           <Header />
             {/* Conteúdo Principal */}
             <main className="container mx-auto px-4 py-12">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -398,7 +357,7 @@ export function CheckoutPage() {
                             <button
                                 type="submit"
                                 disabled={isProcessing || !cart || cart.items.length === 0}
-                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg"
+                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg cursor-pointer"
                             >
                                 {isProcessing ? '⏳ Processando...' : '✓ Finalizar Pedido'}
                             </button>
@@ -443,7 +402,7 @@ export function CheckoutPage() {
 
                                     <button
                                         onClick={() => navigate('/catalog')}
-                                        className="w-full mt-6 px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm"
+                                        className="w-full mt-6 px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm cursor-pointer"
                                     >
                                         ← Voltar ao Catálogo
                                     </button>
@@ -453,7 +412,7 @@ export function CheckoutPage() {
                                     <p className="text-gray-500 mb-4">Seu carrinho está vazio</p>
                                     <button
                                         onClick={() => navigate('/catalog')}
-                                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium cursor-pointer"
                                     >
                                         Adicionar Produtos
                                     </button>

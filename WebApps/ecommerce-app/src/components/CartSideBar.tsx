@@ -128,7 +128,7 @@ export function CartSidebar() {
                         </Dialog.Title>
                         <button
                           type="button"
-                          className="rounded-lg bg-white/20 p-2 text-white hover:bg-white/30 transition-colors"
+                          className="rounded-lg bg-white/20 p-2 text-white hover:bg-white/30 transition-colors cursor-pointer"
                           onClick={close}
                         >
                           <span className="sr-only">Fechar</span>
@@ -159,7 +159,7 @@ export function CartSidebar() {
                           </p>
                           <button
                             onClick={close}
-                            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all"
+                            className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all cursor-pointer"
                           >
                             Continuar Comprando
                           </button>
@@ -208,7 +208,7 @@ export function CartSidebar() {
                                   <button
                                     type="button"
                                     onClick={() => removeItem(item.productId)}
-                                    className="mt-3 w-full text-center text-sm font-medium text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 py-2 rounded-lg transition-colors"
+                                    className="mt-3 w-full text-center text-sm font-medium text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 py-2 rounded-lg transition-colors cursor-pointer"
                                   >
                                     Remover do carrinho
                                   </button>
@@ -244,14 +244,14 @@ export function CartSidebar() {
                         <button
                           onClick={() => navigate('/checkout')}
                           disabled={!cart?.items || cart.items.length === 0}
-                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
                         >
                           Finalizar Pedido
                         </button>
                         
                         <button
                           onClick={close}
-                          className="w-full mt-3 text-gray-600 hover:text-gray-900 py-2 text-sm font-medium transition-colors"
+                          className="w-full mt-3 text-gray-600 hover:text-gray-900 py-2 text-sm font-medium transition-colors cursor-pointer"
                         >
                           Continuar Comprando
                         </button>

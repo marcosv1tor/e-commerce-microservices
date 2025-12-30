@@ -37,7 +37,7 @@ export function OrdersPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header com Voltar */}
         <div className="flex items-center gap-4 mb-8">
-          <button onClick={() => navigate('/catalog')} className="p-2 hover:bg-gray-200 rounded-full">
+          <button onClick={() => navigate('/catalog')} className="p-2 hover:bg-gray-200 rounded-full cursor-pointer">
             <ArrowLeftIcon className="h-6 w-6 text-gray-600" />
           </button>
           <h1 className="text-3xl font-bold text-gray-900">Meus Pedidos</h1>
@@ -61,7 +61,7 @@ export function OrdersPage() {
                   </div>
                   <button
                     onClick={() => setSelectedOrderId(order.id)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
                   >
                     Ver detalhes
                   </button>

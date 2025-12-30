@@ -97,7 +97,7 @@ export function LoginPage() {
                 className={`w-full font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-300 text-white transition-all duration-200 transform
                   ${loading 
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:-translate-y-0.5'
+                    : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer'
                   }`}
               >
                 {loading ? (
