@@ -21,18 +21,20 @@ public class Order : AggregateRoot
     public string UserName { get; private set; } // Nome para facilitar busca
     public OrderStatus Status { get; private set; }
     public Address Address { get; private set; } // Value Object
-
+    public string OrderCode { get; set; }
     // Lista de itens encapsulada
     private List<OrderItem> _orderItems = new();
     public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
 
     public decimal TotalPrice => _orderItems.Sum(o => o.Units * o.UnitPrice);
 
+    private static Random _random = new Random();
     protected Order() { }
 
     public Order(string buyerId, string userName, Address address)
     {
         Id = Guid.NewGuid().ToString();
+        OrderCode = GenerateOrderCode();
         BuyerId = buyerId;
         UserName = userName;
         Address = address;
@@ -67,5 +69,22 @@ public class Order : AggregateRoot
             Status = OrderStatus.Pago;
             MarkAsUpdated();
         }
+    }
+
+    public string GenerateOrderCode()
+    {
+        // Definimos os caracteres permitidos (removemos '0', 'O', '1', 'I' para evitar confusão)
+        const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+        // Gera duas partes de 3 caracteres para facilitar a leitura (Ex: ABC-123)
+        string part1 = new string(Enumerable.Repeat(chars, 3)
+            .Select(s => s[_random.Next(s.Length)]).ToArray());
+
+        string part2 = new string(Enumerable.Repeat(chars, 3)
+            .Select(s => s[_random.Next(s.Length)]).ToArray());
+
+        string orderCode = $"{part1}-{part2}";
+
+        return orderCode;
     }
 }

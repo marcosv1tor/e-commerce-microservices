@@ -24,6 +24,7 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Resul
         // Mapeamento manual (poderia ser AutoMapper)
         var viewModel = new OrderDetailViewModel(
             order.Id,
+            order.OrderCode,
             order.OrderDate,
             order.TotalPrice,
             order.Status.ToString(),

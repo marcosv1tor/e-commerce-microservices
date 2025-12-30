@@ -4,6 +4,7 @@ namespace Order.Application.ViewModels;
 
 public record OrderViewModel(
     string Id,
+    string OrderCode,
     DateTime OrderDate,
     decimal TotalPrice,
     string Status, // Vamos converter o Enum para string na tela
@@ -12,6 +13,7 @@ public record OrderViewModel(
 
 public record OrderDetailViewModel(
     string Id,
+    string OrderCode,
     DateTime OrderDate,
     decimal TotalPrice,
     string Status,

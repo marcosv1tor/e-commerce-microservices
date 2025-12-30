@@ -8,6 +8,7 @@ export interface OrderItem {
 
 export interface Order {
   id: string; // ou orderNumber dependendo do seu backend
+  orderCode: string;
   userName: string;
   totalPrice: number;
   status: string; // Pending, Paid, Shipped, Cancelled

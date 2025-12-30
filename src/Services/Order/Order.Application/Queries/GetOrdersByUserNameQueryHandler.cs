@@ -20,6 +20,7 @@ public class GetOrdersByUserNameQueryHandler : IRequestHandler<GetOrdersByUserNa
 
         var viewModels = orders.Select(o => new OrderViewModel(
             o.Id,
+            o.OrderCode,
             o.OrderDate,
             o.TotalPrice,
             o.Status.ToString(), // Converte Enum para texto (ex: "Paid")
