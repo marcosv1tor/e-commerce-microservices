@@ -5,6 +5,7 @@ import { type Order, type OrderDetail } from '../types/Order';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import Header from '../components/Header';
 
 export function OrdersPage() {
   const user = useAuthStore((state) => state.user);
@@ -33,8 +34,9 @@ export function OrdersPage() {
   if (isError) return <div className="min-h-screen flex items-center justify-center text-red-500">Erro ao carregar pedidos via Gateway.</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
+      <div>
+        <Header />
+      <div className="max-w-4xl mx-auto mt-8 p-4">
         {/* Header com Voltar */}
         <div className="flex items-center gap-4 mb-8">
           <button onClick={() => navigate('/catalog')} className="p-2 hover:bg-gray-200 rounded-full cursor-pointer">
