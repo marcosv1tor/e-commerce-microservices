@@ -52,7 +52,8 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginRespons
             user.Name, 
             user.Email.Value, 
             token,
-            refreshToken
+            refreshToken,
+            user.Role
         );
 
         return Result<LoginResponse>.Success(response);

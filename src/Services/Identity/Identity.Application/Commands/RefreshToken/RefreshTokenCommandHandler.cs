@@ -52,7 +52,8 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, R
             user.Name,
             user.Email.Value,
             newJwtToken,
-            newRefreshToken
+            newRefreshToken,
+            user.Role
         );
 
         return Result<LoginResponse>.Success(response);

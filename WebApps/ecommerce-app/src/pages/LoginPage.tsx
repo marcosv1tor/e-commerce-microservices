@@ -28,10 +28,9 @@ export function LoginPage() {
 
       // 2. Sucesso: Pega o token e o nome do usuário
       // Importante: Verifique se seu Backend retorna { token, userName } ou algo diferente
-      const { token, name } = response.data;
-
+      const { token, name, role } = response.data;
       // 3. Salva no Zustand e LocalStorage
-      login(token, name);
+      login(token, name, role);
 
       // 4. Redireciona para o Catálogo
       navigate('/catalog');
