@@ -9,7 +9,7 @@ import { useCartUiStore } from '../store/useCartUiStore';
 import type { ShoppingCart } from '../types/Basket';
 import { CartSidebar } from '../components/CartSideBar';
 import { Toast } from '../components/Toast';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { AddProductDialog } from '../components/AddProductDialog';
 
@@ -20,10 +20,19 @@ export function CatalogPage() {
 
     const { open } = useCartUiStore(); // Hook para abrir carrinho
     const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false);
+    const [productToEdit, setProductToEdit] = useState<Product | null>(null);
+    const [isAdminUser, setIsAdminUser] = useState(false);
     const queryClient = useQueryClient(); // Para atualizar cache
 
     // Estado para Toast
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+    // Verificar se é admin ao montar o componente
+    useEffect(() => {
+        const role = localStorage.getItem("user_role");
+        setIsAdminUser(role === "Admin");
+        console.log("Admin check - role:", role, "isAdmin:", role === "Admin");
+    }, []);
 
     // Busca os produtos na API
     const { data: products, isLoading, isError } = useQuery({
@@ -119,6 +128,7 @@ export function CatalogPage() {
             role = "Administrador";
             return true;
         }
+        return false;
     }
 
     if (isLoading) {
@@ -159,7 +169,11 @@ export function CatalogPage() {
 
             <AddProductDialog 
                 isOpen={isAddProductDialogOpen}
-                onClose={() => setIsAddProductDialogOpen(false)}
+                onClose={() => {
+                    setIsAddProductDialogOpen(false);
+                    setProductToEdit(null);
+                }}
+                productToEdit={productToEdit}
             />
 
             <CartSidebar />
@@ -212,6 +226,11 @@ export function CatalogPage() {
                                 key={product.id}
                                 product={product}
                                 onAddToCart={handleAddToCart}
+                                onEdit={(product) => {
+                                    setProductToEdit(product);
+                                    setIsAddProductDialogOpen(true);
+                                }}
+                                isAdmin={isAdminUser}
                             />
                         ))}
                     </div>

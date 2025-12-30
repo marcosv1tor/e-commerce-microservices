@@ -1,19 +1,34 @@
 import { type Product } from "../types/Product";
+import { PencilIcon } from "@heroicons/react/24/outline";
 
 interface ProductCardProps {
     product: Product;
     onAddToCart: (product: Product) => void;
+    onEdit?: (product: Product) => void;
+    isAdmin?: boolean;
 }
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+
+export function ProductCard({ product, onAddToCart, onEdit, isAdmin }: ProductCardProps) {
     return (
-    <div className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+    <div className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 relative">
+      {/* Badge Editar (apenas para admin) */}
+      {isAdmin && onEdit && (
+        <button
+          onClick={() => onEdit(product)}
+          className="absolute top-3 right-3 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-lg transition-all duration-200 cursor-pointer z-10 flex items-center justify-center group/edit"
+          title="Editar produto"
+        >
+          <PencilIcon className="w-5 h-5" />
+        </button>
+      )}
+
       {/* Imagem com overlay no hover */}
       <div className="relative h-56 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
-        {product.pictureUrl ? (
+        {product.pictureUri ? (
           <img 
-            src={product.pictureUrl} 
+            src={product.pictureUri} 
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           />

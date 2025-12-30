@@ -6,11 +6,12 @@ export interface Product {
     imageFile: string;
     description: string;
     price: number;
-    pictureUrl?: string;
+    pictureUri?: string;
     units?: number;
 }
 
 export interface NewProduct {
+    Id?: string;
     Name: string;
     Description: string;
     Price: number;

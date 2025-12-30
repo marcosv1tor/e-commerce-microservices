@@ -1,16 +1,17 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/axios";
-import type { NewProduct } from "../types/Product";
+import type { NewProduct, Product } from "../types/Product";
 
 interface AddProductDialogProps {
     isOpen: boolean;
     onClose: () => void;
+    productToEdit?: Product | null;
 }
 
-export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
+export function AddProductDialog({ isOpen, onClose, productToEdit }: AddProductDialogProps) {
     const queryClient = useQueryClient();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState<NewProduct>({
@@ -24,9 +25,64 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
 
     const [error, setError] = useState<string | null>(null);
 
+    // Preencher formulário com dados do produto quando está editando
+    useEffect(() => {
+        if (productToEdit) {
+            setFormData({
+                Id: productToEdit.id,
+                Name: productToEdit.name,
+                Description: productToEdit.description,
+                Price: productToEdit.price,
+                PictureUri: productToEdit.pictureUri || "",
+                Category: productToEdit.category,
+                Stock: productToEdit.units || 0,
+            });
+        } else {
+            // Limpar formulário quando abre para adicionar novo
+            setFormData({
+                Name: "",
+                Description: "",
+                Price: 0,
+                PictureUri: "",
+                Category: "",
+                Stock: 0,
+            });
+        }
+        setError(null);
+    }, [isOpen, productToEdit]);
+
     const addProductMutation = useMutation({
         mutationFn: async (product: NewProduct) => {
             const response = await api.post("/product", product);
+            return response.data;
+        },
+        onSuccess: () => {
+            // Invalida a query de produtos para recarregar
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            // Limpa o formulário
+            setFormData({
+                Name: "",
+                Description: "",
+                Price: 0,
+                PictureUri: "",
+                Category: "",
+                Stock: 0,
+            });
+            setError(null);
+            // Fecha o dialog
+            onClose();
+        },
+        onError: (err: any) => {
+            setError(
+                err.response?.data?.message ||
+                "Erro ao criar produto. Tente novamente."
+            );
+        },
+    });
+
+    const editProductMutation = useMutation({
+        mutationFn: async (product: NewProduct) => {
+            const response = await api.put(`/product/${productToEdit?.id}`, product);
             return response.data;
         },
         onSuccess: () => {
@@ -81,7 +137,13 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
 
         setIsLoading(true);
         try {
-            await addProductMutation.mutateAsync(formData);
+            if (productToEdit) {
+                // Modo edição
+                await editProductMutation.mutateAsync(formData);
+            } else {
+                // Modo adicionar
+                await addProductMutation.mutateAsync(formData);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -117,7 +179,7 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-6">
                                     <Dialog.Title className="text-2xl font-bold text-gray-900">
-                                        Adicionar Novo Produto
+                                        {productToEdit ? "Editar Produto" : "Adicionar Novo Produto"}
                                     </Dialog.Title>
                                     <button
                                         onClick={onClose}
@@ -270,7 +332,7 @@ export function AddProductDialog({ isOpen, onClose }: AddProductDialogProps) {
                                             disabled={isLoading}
                                             className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                         >
-                                            {isLoading ? "Salvando..." : "Adicionar Produto"}
+                                            {isLoading ? "Salvando..." : productToEdit ? "Atualizar Produto" : "Adicionar Produto"}
                                         </button>
                                     </div>
                                 </form>
