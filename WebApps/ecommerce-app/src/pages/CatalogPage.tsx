@@ -11,6 +11,7 @@ import { CartSidebar } from '../components/CartSideBar';
 import { Toast } from '../components/Toast';
 import { useState } from 'react';
 import Header from '../components/Header';
+import { AddProductDialog } from '../components/AddProductDialog';
 
 export function CatalogPage() {
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ export function CatalogPage() {
     const user = useAuthStore((state) => state.user);
 
     const { open } = useCartUiStore(); // Hook para abrir carrinho
+    const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false);
     const queryClient = useQueryClient(); // Para atualizar cache
 
     // Estado para Toast
@@ -155,6 +157,11 @@ export function CatalogPage() {
                 />
             )}
 
+            <AddProductDialog 
+                isOpen={isAddProductDialogOpen}
+                onClose={() => setIsAddProductDialogOpen(false)}
+            />
+
             <CartSidebar />
             <Header />
 
@@ -171,7 +178,10 @@ export function CatalogPage() {
                     </div>
                     {isAdmin() &&
                         <div className="">
-                            <button className='bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-lg shadow-lg hover:from-green-600 hover:to-green-700 transition-colors cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 text-white font-bold flex items-center gap-2' onClick={() => navigate('/admin/products')}>
+                            <button 
+                                className='bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-lg shadow-lg hover:from-green-600 hover:to-green-700 transition-colors cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 text-white font-bold flex items-center gap-2' 
+                                onClick={() => setIsAddProductDialogOpen(true)}
+                            >
                                 <span className="flex items-center gap-2">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

@@ -9,3 +9,12 @@ export interface Product {
     pictureUrl?: string;
     units?: number;
 }
+
+export interface NewProduct {
+    Name: string;
+    Description: string;
+    Price: number;
+    PictureUri: string;
+    Category: string;
+    Stock: number;
+}
