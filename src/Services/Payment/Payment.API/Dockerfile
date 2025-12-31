@@ -10,7 +10,7 @@ WORKDIR /src
 COPY ["src/Services/Payment/Payment.API/Payment.API.csproj", "src/Services/Payment/Payment.API/"]
 COPY ["src/Services/Payment/Payment.Application/Payment.Application.csproj", "src/Services/Payment/Payment.Application/"]
 COPY ["src/Services/Payment/Payment.Domain/Payment.Domain.csproj", "src/Services/Payment/Payment.Domain/"]
-COPY ["src/Services/Payment/Payment.Infrastructure/Payment.Infrastructure.csproj", "src/Services/Order/Payment.Infrastructure/"]
+COPY ["src/Services/Payment/Payment.Infrastructure/Payment.Infrastructure.csproj", "src/Services/Payment/Payment.Infrastructure/"]
 COPY ["src/BuildingBlocks/Common/Common.csproj", "src/BuildingBlocks/Common/"]
 
 RUN dotnet restore "./src/Services/Payment/Payment.API/Payment.API.csproj"
