@@ -87,7 +87,7 @@ export function CatalogPage() {
                     price: product.price,
                     quantity: 1,
                     color: 'Default',
-                    pictureUrl: 'img-temp-placeholder.png' // Placeholder
+                    pictureUrl: product.pictureUri // Placeholder
                 });
             }
 
