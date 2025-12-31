@@ -70,6 +70,9 @@ export function ProductCard({ product, onAddToCart, onEdit, isAdmin }: ProductCa
           </div>
         )}
 
+        {/* Gradiente de transição na parte inferior */}
+        <div className="absolute inset-x-0 bottom-0 h-2 bg-gradient-to-b from-transparent via-white/0 to-white pointer-events-none" />
+
         {/* Badge de categoria */}
         <span className="absolute top-3 left-3 px-3 py-1 bg-white/95 backdrop-blur-sm text-xs font-bold text-blue-600 uppercase tracking-wider rounded-full shadow-md">
           {product.category}
