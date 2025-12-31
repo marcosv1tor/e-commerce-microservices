@@ -196,7 +196,7 @@ export function CatalogPage() {
                                 className='bg-gradient-to-r from-green-500 to-green-600 p-2 rounded-lg shadow-lg hover:from-green-600 hover:to-green-700 transition-colors cursor-pointer transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 text-white font-bold flex items-center gap-2' 
                                 onClick={() => setIsAddProductDialogOpen(true)}
                             >
-                                <span className="flex items-center gap-2">
+                                <span className="flex items-center gap-2 mr-2 ml-1">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                     </svg>

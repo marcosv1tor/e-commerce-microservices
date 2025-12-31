@@ -242,7 +242,7 @@ export function CartSidebar() {
                         </div>
                         
                         <button
-                          onClick={() => navigate('/checkout')}
+                          onClick={() => navigate('/checkout') && close}
                           disabled={!cart?.items || cart.items.length === 0}
                           className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-xl font-bold text-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
                         >
