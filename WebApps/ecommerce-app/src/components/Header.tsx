@@ -81,8 +81,8 @@ export default function Header() {
 
                             <div className="flex items-center gap-4 pl-6 ml-auto pr-6">
                                 <div className="text-center pr-6">
-                                    <p className="text-s text-gray-500">Bem-vindo,</p>
-                                    <p className="font-bold text-gray-900">{user}</p>
+                                    <p className="text-xs sm:text-sm text-gray-500">Bem-vindo,</p>
+                                    <p className="text-sm sm:text-base font-bold text-gray-900 truncate">{user}</p>
                                 </div>
                             </div>
 
