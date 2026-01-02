@@ -78,7 +78,7 @@ export function OrdersPage() {
                             <li key={index} className="py-3 flex justify-between items-center">
                             <div className="flex items-center gap-4">
                                 <div className="h-12 w-12 bg-gray-100 rounded flex items-center justify-center text-xl">
-                                📦
+                                    <img src={item.pictureUrl} alt={item.productName} />
                                 </div>
                                 <div>
                                 <p className="font-medium text-gray-800">{item.productName}</p>

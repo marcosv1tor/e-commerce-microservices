@@ -140,7 +140,6 @@ export default function Header() {
                                                 <div className="px-1 py-1">
                                                     {/* Informações do Usuário no Topo */}
                                                     <div className="px-3 py-2 border-b border-gray-100">
-                                                        <p className="text-xs text-gray-500">Bem-vindo</p>
                                                         <p className="text-sm font-semibold text-gray-900 truncate">{user}</p>
                                                     </div>
 

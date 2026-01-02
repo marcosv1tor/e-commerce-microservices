@@ -23,6 +23,7 @@ export interface OrderDetail {
     productName: string;
     units: number;
     unitPrice: number;
+    pictureUrl: string;
   }[];
 }
 
