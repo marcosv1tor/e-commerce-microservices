@@ -1,16 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../api/axios';
 import { useAuthStore } from '../store/useAuthStore';
 import { type Order, type OrderDetail } from '../types/Order';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { ArrowLeftIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import { createPortal } from 'react-dom';
 
 export function OrdersPage() {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [isAdminUser, setIsAdminUser] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  // Verificar se é admin
+  useEffect(() => {
+    const role = localStorage.getItem("user_role");
+    setIsAdminUser(role === "Admin");
+  }, []);
   // Busca os pedidos do usuário
   const { data: orders, isLoading, isError } = useQuery({
     queryKey: ['orders', user],
@@ -21,6 +31,22 @@ export function OrdersPage() {
       return response.data;
     },
     enabled: !!user, // Só busca se tiver usuário logado
+  });
+
+  // Mutation para deletar pedido
+  const deleteOrderMutation = useMutation({
+    mutationFn: async (orderId: string) => {
+      const response = await api.delete(`/order/${orderId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['orders', user] });
+      setShowDeleteConfirm(null);
+    },
+    onError: (err: any) => {
+      console.error("Erro ao deletar pedido:", err);
+      setShowDeleteConfirm(null);
+    },
   });
   const { data: orderDetail } = useQuery({
   queryKey: ['orderDetail', selectedOrderId],
@@ -61,12 +87,24 @@ export function OrdersPage() {
                     <p className="font-semibold text-gray-900">Pedido #{order.orderCode}</p>
                     <p className="text-sm text-gray-500">Data: {new Date(order.orderDate).toLocaleDateString('pt-BR')}</p>
                   </div>
-                  <button
-                    onClick={() => setSelectedOrderId(order.id)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
-                  >
-                    Ver detalhes
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setSelectedOrderId(order.id)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
+                    >
+                      Ver detalhes
+                    </button>
+                    {isAdminUser && (
+                      <button
+                        onClick={() => setShowDeleteConfirm(order.id)}
+                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors cursor-pointer flex items-center gap-2"
+                        title="Deletar pedido"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                        <span className="hidden sm:inline">Deletar</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Itens do Pedido */}
@@ -93,6 +131,34 @@ export function OrdersPage() {
                         </ul>
                     </div>
                     )}
+
+                {/* Dialog de Confirmação de Deleção */}
+                {showDeleteConfirm === order.id && createPortal(
+                  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm mx-4 animate-in fade-in zoom-in duration-300">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Deletar Pedido</h3>
+                      <p className="text-gray-600 mb-6">
+                        Tem certeza que deseja deletar o pedido <strong>#{order.orderCode}</strong>? Esta ação não pode ser desfeita.
+                      </p>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setShowDeleteConfirm(null)}
+                          className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-semibold transition-colors cursor-pointer"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          onClick={() => deleteOrderMutation.mutate(order.id)}
+                          disabled={deleteOrderMutation.isPending}
+                          className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                        >
+                          {deleteOrderMutation.isPending ? "Deletando..." : "Sim, Deletar"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>,
+                  document.body
+                )}
               </div>
             ))
           )}

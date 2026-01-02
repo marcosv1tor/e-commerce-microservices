@@ -65,7 +65,7 @@ export default function Header() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                    <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
                                         E-Commerce
                                     </h1>
                                     <p className="text-xs text-gray-500 hidden sm:block">Microservices Architecture</p>
