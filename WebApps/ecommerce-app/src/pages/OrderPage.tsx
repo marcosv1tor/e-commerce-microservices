@@ -80,31 +80,30 @@ export function OrdersPage() {
             </div>
           ) : (
             orders?.map((order) => (
-              <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+              <div key={order.id} className="bg-white rounded-lg shadow-md overflow-visible border border-gray-100 relative">
+                {/* Botão de Deletar (Admin) - Canto Superior Direito (Sobreposto) */}
+                {isAdminUser && (
+                  <button
+                    onClick={() => setShowDeleteConfirm(order.id)}
+                    className="absolute -top-5 -right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center z-10"
+                    title="Deletar pedido"
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </button>
+                )}
+                
                 {/* Cabeçalho do Pedido */}
                 <div className="bg-gray-50 px-6 py-4 border-b flex justify-between items-center flex-wrap gap-2">
                   <div>
                     <p className="font-semibold text-gray-900">Pedido #{order.orderCode}</p>
                     <p className="text-sm text-gray-500">Data: {new Date(order.orderDate).toLocaleDateString('pt-BR')}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => setSelectedOrderId(order.id)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors cursor-pointer"
-                    >
-                      Ver detalhes
-                    </button>
-                    {isAdminUser && (
-                      <button
-                        onClick={() => setShowDeleteConfirm(order.id)}
-                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors cursor-pointer flex items-center gap-2"
-                        title="Deletar pedido"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                        <span className="hidden sm:inline">Deletar</span>
-                      </button>
-                    )}
-                  </div>
+                  <button
+                    onClick={() => setSelectedOrderId(order.id)}
+                    className="px-4 py-1 bg-slate-400 text-white rounded-full hover:bg-slate-500 transition-colors cursor-pointer"
+                  >
+                    Ver detalhes
+                  </button>
                 </div>
 
                 {/* Itens do Pedido */}
