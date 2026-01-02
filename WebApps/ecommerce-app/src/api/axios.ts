@@ -10,7 +10,7 @@ console.log('🌐 Host do navegador:', window.location.host);
 const getBaseURL = () => {
   const isHTTPS = window.location.protocol === 'https:';
   const protocol = isHTTPS ? 'https' : 'http';
-  return `${protocol}://localhost:5237/api/v1`;
+  return `${protocol}://localhost:5000/api/v1`;
 };
 
 console.log('🌍 Base URL será:', getBaseURL());

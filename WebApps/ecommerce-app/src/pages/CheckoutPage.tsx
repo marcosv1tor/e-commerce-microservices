@@ -127,8 +127,11 @@ export function CheckoutPage() {
                 expiryDate: '',
                 cvv: '',
             });
+            // Limpar carrinho completamente
+            if (cart && cart.items.length > 0) {
+                updateBasketMutation.mutate({ ...cart, items: [] });
+            }
             queryClient.invalidateQueries({ queryKey: ['basket', user] });
-            removeItem(cart.items.map(i => i.productId).join(","));
             navigate('/orders');
         } catch (error) {
             console.error(error);
