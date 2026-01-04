@@ -21,7 +21,61 @@ Este projeto é uma implementação completa de uma plataforma de e-commerce uti
 - **Observabilidade**: Serilog + Seq
 - **Containerização**: Docker e Docker Compose
 
-## 🏗️ Arquitetura
+## 🏗️ Diagrama de Arquitetura
+
+```mermaid
+graph TD
+    %% Atores
+    User((Cliente))
+    
+    %% Frontend
+    subgraph Frontend [React App]
+        UI[Customer App]
+    end
+
+    %% Gateway
+    Gateway[API Gateway <br/> YARP]
+
+    %% Barramento
+    MQ((RabbitMQ <br/> Event Bus))
+
+    %% Microserviços
+    subgraph Backend [Microservices Cluster]
+        Identity[🔐 Identity API]
+        Catalog[📦 Catalog API]
+        Basket[🛒 Basket API]
+        Order[📝 Order API]
+        Payment[💳 Payment API]
+        Notification[📧 Notification API]
+    end
+
+    %% Banco de Dados
+    subgraph Data [Persistence Layer]
+        Mongo[(MongoDB)]
+        Redis[(Redis Cache)]
+    end
+
+    %% Fluxos
+    User -->|HTTPS| UI
+    UI -->|REST / JSON| Gateway
+    
+    Gateway --> Identity
+    Gateway --> Catalog
+    Gateway --> Basket
+    Gateway --> Order
+
+    %% Persistência
+    Catalog --> Mongo
+    Order --> Mongo
+    Identity --> Mongo
+    Basket --> Redis
+
+    %% Eventos Assíncronos
+    Order -- "1. OrderCreated" --> MQ
+    MQ --> Payment
+    Payment -- "2. PaymentSucceeded" --> MQ
+    MQ --> Order
+    MQ --> Notification
 
 ### Microserviços
 
