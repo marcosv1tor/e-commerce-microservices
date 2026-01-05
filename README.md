@@ -23,36 +23,38 @@ Este projeto é uma implementação completa de uma plataforma de e-commerce uti
 
 ## 🏗️ Diagrama de Arquitetura
 
+
+
 ```mermaid
 graph TD
     %% Atores
-    User((Cliente))
+    User(("User Client"))
     
     %% Frontend
-    subgraph Frontend [React App]
-        UI[Customer App]
+    subgraph Frontend ["React App"]
+        UI["Customer App"]
     end
 
     %% Gateway
-    Gateway[API Gateway <br/> YARP]
+    Gateway["API Gateway <br/> YARP"]
 
     %% Barramento
-    MQ((RabbitMQ <br/> Event Bus))
+    MQ(("RabbitMQ <br/> Event Bus"))
 
     %% Microserviços
-    subgraph Backend [Microservices Cluster]
-        Identity[🔐 Identity API]
-        Catalog[📦 Catalog API]
-        Basket[🛒 Basket API]
-        Order[📝 Order API]
-        Payment[💳 Payment API]
-        Notification[📧 Notification API]
+    subgraph Backend ["Microservices Cluster"]
+        Identity["🔐 Identity API"]
+        Catalog["📦 Catalog API"]
+        Basket["🛒 Basket API"]
+        Order["📝 Order API"]
+        Payment["💳 Payment API"]
+        Notification["📧 Notification API"]
     end
 
     %% Banco de Dados
-    subgraph Data [Persistence Layer]
-        Mongo[(MongoDB)]
-        Redis[(Redis Cache)]
+    subgraph Data ["Persistence Layer"]
+        Mongo[("MongoDB")]
+        Redis[("Redis Cache")]
     end
 
     %% Fluxos
@@ -76,54 +78,6 @@ graph TD
     Payment -- "2. PaymentSucceeded" --> MQ
     MQ --> Order
     MQ --> Notification
-
-### Microserviços
-
-| Serviço | Descrição | Porta | Status |
-|---------|-----------|-------|--------|
-| **Identity.API** | Autenticação e Autorização (JWT) | 5001 | 🚧 Em desenvolvimento |
-| **Catalog.API** | Gerenciamento de Produtos | 5002 | 📋 Planejado |
-| **Basket.API** | Carrinho de Compras | 5003 | 📋 Planejado |
-| **Order.API** | Processamento de Pedidos | 5004 | 📋 Planejado |
-| **Payment.API** | Integração de Pagamentos | 5005 | 📋 Planejado |
-| **Notification.API** | Notificações (Email/SMS) | 5006 | 📋 Planejado |
-| **Gateway.API** | API Gateway (YARP) | 5000 | 📋 Planejado |
-
-### Aplicações Frontend
-
-| Aplicação | Descrição | Porta | Status |
-|-----------|-----------|-------|--------|
-| **Customer App** | Loja Virtual para Clientes | 3000 | 📋 Planejado |
-| **Admin Dashboard** | Painel Administrativo | 3001 | 📋 Planejado |
-
-### Infraestrutura
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                      API Gateway                         │
-│                      (YARP - 5000)                       │
-└────────────────┬────────────────────────────────────────┘
-                 │
-    ┌────────────┼────────────┬─────────────┬──────────┐
-    │            │            │             │          │
-┌───▼───┐   ┌───▼───┐   ┌───▼───┐    ┌───▼───┐  ┌──▼────┐
-│Identity│   │Catalog│   │Basket │    │ Order │  │Payment│
-│  API   │   │  API  │   │  API  │    │  API  │  │  API  │
-└────┬───┘   └───┬───┘   └───┬───┘    └───┬───┘  └───┬───┘
-     │           │           │            │          │
-     └───────────┴───────────┴────────────┴──────────┘
-                          │
-                 ┌────────▼────────┐
-                 │   RabbitMQ      │
-                 │  (Message Bus)  │
-                 └─────────────────┘
-                          │
-     ┌────────────────────┼────────────────┐
-     │                    │                │
-┌────▼─────┐         ┌───▼───┐       ┌───▼───┐
-│ MongoDB  │         │ Redis │       │  Seq  │
-│  (DB)    │         │(Cache)│       │ (Logs)│
-└──────────┘         └───────┘       └───────┘
 ```
 
 ## 🚀 Começando
