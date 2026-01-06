@@ -251,7 +251,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---------
 ## Nota:
-- --------> PROJETO DESENVOLVIDO SEM AGENTES IA PARA CONSOLIDAR CONHECIMENTOS <-------- 
+-  PROJETO DESENVOLVIDO SEM AGENTES IA PARA CONSOLIDAR CONHECIMENTOS 
 
 ⭐ Se este projeto te ajudou, considere dar uma estrela!
 
