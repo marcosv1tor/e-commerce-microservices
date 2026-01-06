@@ -184,7 +184,7 @@ ecommerce-microservices/
 
 ## 📊 Roadmap
 
-### Fase 1: Fundação ✅ (Atual)
+### Fase 1: Fundação ✅ 
 - [x] Setup inicial do projeto
 - [x] Infraestrutura Docker
 - [x] Identity Service
@@ -203,9 +203,9 @@ ecommerce-microservices/
 ### Fase 4: Gateway & Frontend 📋
 - [X] API Gateway (YARP)
 - [X] Customer App (React)
-- [ ] Admin Dashboard (React)
+- [x] Admin Dashboard (React)
 
-### Fase 5: Produção 📋
+### Fase 5: Produção 📋 (Atual)
 - [ ] CI/CD completo
 - [ ] Testes E2E
 - [ ] Observabilidade
