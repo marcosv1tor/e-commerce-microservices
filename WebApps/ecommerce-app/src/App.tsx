@@ -4,6 +4,7 @@ import { CatalogPage } from './pages/CatalogPage';
 import { OrdersPage } from './pages/OrderPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { DashBoardPage } from './pages/DashBoardPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/dashboard" element={<DashBoardPage />} />
       </Routes>
     </BrowserRouter>
   );
