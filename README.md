@@ -199,6 +199,7 @@ ecommerce-microservices/
 - [X] Payment Service
 - [X] Notification Service
 - [X] Message Bus configurado
+- [X] Stripe (WebHook)
 
 ### Fase 4: Gateway & Frontend 
 - [X] API Gateway (YARP)
@@ -253,6 +254,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## Nota:
 -  PROJETO DESENVOLVIDO SEM AGENTES IA PARA CONSOLIDAR CONHECIMENTOS 
 
-⭐ Se este projeto te ajudou, considere dar uma estrela!
+Se este projeto te ajudou, considere dar uma estrela!
 
-**Status do Projeto**: 🚧 Em Desenvolvimento Ativo
+**Status do Projeto**: Em Desenvolvimento Ativo
