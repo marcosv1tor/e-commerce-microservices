@@ -1,4 +1,4 @@
-# 🛒 E-Commerce Microservices
+# E-Commerce Microservices
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![React](https://img.shields.io/badge/React-18.x-61DAFB?logo=react)](https://reactjs.org/)
@@ -9,7 +9,7 @@
 
 > Plataforma de e-commerce moderna construída com arquitetura de microserviços, utilizando as mais recentes tecnologias .NET 10, React, MongoDB e RabbitMQ.
 
-## 📋 Sobre o Projeto
+## Sobre o Projeto
 
 Este projeto é uma implementação completa de uma plataforma de e-commerce utilizando:
 - **Backend**: Microserviços em .NET 10 com Clean Architecture e DDD
@@ -21,7 +21,7 @@ Este projeto é uma implementação completa de uma plataforma de e-commerce uti
 - **Observabilidade**: Serilog + Seq
 - **Containerização**: Docker e Docker Compose
 
-## 🏗️ Diagrama de Arquitetura
+## Diagrama de Arquitetura
 
 
 
@@ -43,12 +43,12 @@ graph TD
 
     %% Microserviços
     subgraph Backend ["Microservices Cluster"]
-        Identity["🔐 Identity API"]
-        Catalog["📦 Catalog API"]
-        Basket["🛒 Basket API"]
-        Order["📝 Order API"]
-        Payment["💳 Payment API"]
-        Notification["📧 Notification API"]
+        Identity["Identity API"]
+        Catalog["Catalog API"]
+        Basket["Basket API"]
+        Order["Order API"]
+        Payment["Payment API"]
+        Notification["Notification API"]
     end
 
     %% Banco de Dados
@@ -80,7 +80,7 @@ graph TD
     MQ --> Notification
 ```
 
-## 🚀 Começando
+## Começando
 
 ### Pré-requisitos
 
@@ -121,7 +121,7 @@ dotnet restore
 dotnet run
 ```
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 ### Backend
 - **.NET 10** - Framework principal
@@ -149,7 +149,7 @@ dotnet run
 - **GitHub Actions** - CI/CD
 - **YARP** - Reverse Proxy
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 ecommerce-microservices/
@@ -172,7 +172,7 @@ ecommerce-microservices/
 └── .github/                   # GitHub Actions
 ```
 
-## 🎯 Padrões e Princípios
+## Padrões e Princípios
 
 - ✅ **Clean Architecture** - Separação de responsabilidades
 - ✅ **Domain-Driven Design (DDD)** - Modelagem rica de domínio
@@ -182,36 +182,36 @@ ecommerce-microservices/
 - ✅ **Repository Pattern** - Abstração de dados
 - ✅ **Unit of Work** - Transações consistentes
 
-## 📊 Roadmap
+## Roadmap
 
-### Fase 1: Fundação ✅ 
+### Fase 1: Fundação  
 - [x] Setup inicial do projeto
 - [x] Infraestrutura Docker
 - [x] Identity Service
 - [x] Building Blocks compartilhados
 
-### Fase 2: Core Services 📋
+### Fase 2: Core Services 
 - [X] Catalog Service
 - [X] Basket Service
 - [X] Order Service
 
-### Fase 3: Integrações 📋
+### Fase 3: Integrações 
 - [X] Payment Service
 - [X] Notification Service
 - [X] Message Bus configurado
 
-### Fase 4: Gateway & Frontend 📋
+### Fase 4: Gateway & Frontend 
 - [X] API Gateway (YARP)
 - [X] Customer App (React)
 - [x] Admin Dashboard (React)
 
-### Fase 5: Produção 📋 (Atual)
+### Fase 5: Produção (Atual)
 - [ ] CI/CD completo
 - [ ] Testes E2E
 - [ ] Observabilidade
 - [ ] Deploy em Cloud
 
-## 🤝 Contribuindo
+## Contribuindo
 
 Contribuições são bem-vindas! Este é um projeto de estudo, mas feedbacks e sugestões são sempre apreciados.
 
@@ -221,7 +221,7 @@ Contribuições são bem-vindas! Este é um projeto de estudo, mas feedbacks e s
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-## 📝 Commits Semânticos
+## Commits Semânticos
 
 Este projeto segue [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -233,17 +233,17 @@ Este projeto segue [Conventional Commits](https://www.conventionalcommits.org/):
 - `test`: Testes
 - `chore`: Tarefas de build/config
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## 👨‍💻 Autor
+## Autor
 
 **Marcos Vítor**
 - GitHub: [@marcosv1tor](https://github.com/marcosv1tor)
 - LinkedIn: [Marcos Vítor](https://www.linkedin.com/in/marcosvitor7/)
 
-## 🙏 Agradecimentos
+## Agradecimentos
 
 - Microsoft - eShopOnContainers como referência
 - Jason Taylor - Clean Architecture template
