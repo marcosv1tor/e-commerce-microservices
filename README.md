@@ -174,13 +174,13 @@ ecommerce-microservices/
 
 ## Padrões e Princípios
 
-- ✅ **Clean Architecture** - Separação de responsabilidades
-- ✅ **Domain-Driven Design (DDD)** - Modelagem rica de domínio
-- ✅ **CQRS** - Separação de comandos e queries
-- ✅ **Event-Driven Architecture** - Comunicação via eventos
-- ✅ **SOLID Principles** - Código manutenível
-- ✅ **Repository Pattern** - Abstração de dados
-- ✅ **Unit of Work** - Transações consistentes
+- **Clean Architecture** - Separação de responsabilidades
+- **Domain-Driven Design (DDD)** - Modelagem rica de domínio
+- **CQRS** - Separação de comandos e queries
+- **Event-Driven Architecture** - Comunicação via eventos
+- **SOLID Principles** - Código manutenível
+- **Repository Pattern** - Abstração de dados
+- **Unit of Work** - Transações consistentes
 
 ## Roadmap
 
@@ -254,6 +254,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## Nota:
 -  PROJETO DESENVOLVIDO SEM AGENTES IA PARA CONSOLIDAR CONHECIMENTOS 
 
-Se este projeto te ajudou, considere dar uma estrela!
+Se gostou do projeto, considere dar uma estrela!
 
 **Status do Projeto**: Em Desenvolvimento Ativo
